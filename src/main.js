@@ -6,17 +6,22 @@ import {createsListTemplate} from "./view/list.js";
 import {createsFilmCardTemplate} from "./view/film-card.js";
 import {createLoadMoreButtonTemplate} from "./view/load-more-button.js";
 import {createsStatisticsTemplate} from "./view/stats.js";
-// import {createsPopupTemplate} from "./view/popup.js";
+import {createsPopupTemplate} from "./view/popup.js";
+import {createCommentsListTemplate} from "./view/comments.js";
 import {generateFilm} from "./mock/film.js";
 import {generateFilter} from "./mock/filter.js";
+import {generateComment} from "./mock/comments.js";
 
 
 const FILM_COUNT = 10;
 const FILM_COUNT_PER_STEP = 5;
-const FILM_EXTRA_COUNT = 2;
+const FILM_COMMENT_COUNT = 5;
 
 const films = new Array(FILM_COUNT).fill().map(generateFilm);
 const filters = generateFilter(films);
+const countOfFilms = generateFilter(films);
+const comments = new Array(FILM_COMMENT_COUNT).fill().map(generateComment);
+
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -60,15 +65,9 @@ if (films.length > FILM_COUNT_PER_STEP) {
 }
 
 
-const filmsListExtraElement = document.querySelectorAll(`.films-list--extra`);
-for (let i = 0; i < FILM_EXTRA_COUNT; i++) {
-  const filmsListExtraContainerElement = filmsListExtraElement[i].querySelector(`.films-list__container`);
-  for (i = 0; i < FILM_EXTRA_COUNT; i++) {
-    render(filmsListExtraContainerElement, createsFilmCardTemplate(), `beforeend`);
-  }
-}
-
-
 const siteFooterElement = document.querySelector(`.footer__statistics`);
-render(siteFooterElement, createsStatisticsTemplate(), `beforeend`);
-// render(siteFooterElement, createsPopupTemplate(), `beforeend`);
+render(siteFooterElement, createsStatisticsTemplate(countOfFilms[0]), `beforeend`);
+render(siteFooterElement, createsPopupTemplate(films[0]), `beforeend`);
+
+const filmsCommentsTitleElement = siteFooterElement.querySelector(`.film-details__comments-title`);
+render(filmsCommentsTitleElement, createCommentsListTemplate(comments), `beforeend`);

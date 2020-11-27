@@ -55,11 +55,11 @@ const generateMessage = () => {
 };
 
 export const generateComment = () => {
-  const date = generateDate();
+  const commentDate = generateDate();
 
   return {
     emoji: generateEmoji(),
-    date,
+    commentDate,
     author: generateAuthor(),
     message: generateMessage()
   };

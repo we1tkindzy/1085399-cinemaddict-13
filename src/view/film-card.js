@@ -1,10 +1,9 @@
 import dayjs from "dayjs";
 
 export const createsFilmCardTemplate = (film) => {
-  const {poster, isAddToWatchlist, isWatched, isFavorite, name, rating, releaseDate, genre, description} = film;
+  const {poster, isAddToWatchlist, isWatched, isFavorite, name, rating, releaseDate, viewingTime, genre, description, comments} = film;
 
   const date = releaseDate !== null ? dayjs(releaseDate).format(`YYYY`) : ``;
-
 
   const watchlistClassName = isAddToWatchlist
     ? `film-card__controls-item--add-to-watchlist film-card__controls-item--active`
@@ -23,12 +22,12 @@ export const createsFilmCardTemplate = (film) => {
     <p class="film-card__rating">${rating}</p>
     <p class="film-card__info">
       <span class="film-card__year">${date}</span>
-      <span class="film-card__duration">1h 55m</span>
+      <span class="film-card__duration">${viewingTime}</span>
       <span class="film-card__genre">${genre}</span>
     </p>
     <img src="${poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${description}</p>
-    <a class="film-card__comments">5 comments</a>
+    <a class="film-card__comments">${comments} comments</a>
     <div class="film-card__controls">
       <button class="film-card__controls-item button ${watchlistClassName}" type="button">Add to watchlist</button>
       <button class="film-card__controls-item button ${watchedClassName}" type="button">Mark as watched</button>
