@@ -1,4 +1,6 @@
-export const createsUsersRankTemplate = () => {
+import {createElement} from "../utils.js";
+
+const createsUsersRankTemplate = () => {
   return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
@@ -46,3 +48,25 @@ export const createsUsersRankTemplate = () => {
 
   </section>`;
 };
+
+export default class UsersRank {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createsUsersRankTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

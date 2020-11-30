@@ -1,3 +1,5 @@
+import {createElement} from "../utils.js";
+
 const createMainNavigationItemTemplate = (filter, isChecked) => {
   const {name, count} = filter;
 
@@ -22,3 +24,25 @@ export const cratesMainNavigationTemplate = (filterItems) => {
   </nav>`;
 };
 
+export default class MainNavigation {
+  constructor(filters) {
+    this._filters = filters;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return cratesMainNavigationTemplate(this._filters);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
