@@ -33,18 +33,16 @@ const siteFooterElement = document.querySelector(`.footer__statistics`);
 
 
 const renderPopup = (FilmListElement, film) => {
-  const popupComponent = new PopupView(film);
-
-  const filmCard = new FilmCardView(film);
-  const filmPopup = new PopupInfoView(film);
+  const filmCard = new FilmCardView(films[0])
+  const filmPopup = new PopupInfoView();
 
   const openPopup = () => {
-    FilmListElement.appendChild(new PopupView(film).getElement());
-  };
+    FilmListElement.appendChild(new PopupView().getElement());
+  }
 
   const closePopup = () => {
-    FilmListElement.removeChild(new PopupView(film).getElement());
-  };
+    FilmListElement.removeChild(new PopupView().getElement());
+  }
 
   filmCard.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, () => {
     openPopup();
@@ -59,11 +57,7 @@ const renderPopup = (FilmListElement, film) => {
   filmPopup.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
     closePopup();
   });
-
-  render(siteFooterElement, popupComponent.getElement(), RenderPosition.BEFOREEND);
-  render(popupComponent.getElement(), filmPopup.getElement(), RenderPosition.BEFOREEND);
-  render(popupComponent.getElement(), new PopupCommentsView(comments).getElement(), RenderPosition.BEFOREEND);
-};
+}
 
 
 render(siteHeaderElement, new ProfileView().getElement(), RenderPosition.BEFOREEND);
@@ -82,7 +76,7 @@ render(listComponent.getElement(), filmsListComponent.getElement(), RenderPositi
 const filmsListElement = document.querySelector(`.films-list`);
 const filmsListContainerElement = filmsListElement.querySelector(`.films-list__container`);
 for (let i = 0; i < Math.min(films.length, FILM_COUNT_PER_STEP); i++) {
-  renderPopup(filmsListContainerElement, films[i]);
+  render(filmsListContainerElement, new FilmCardView(films[i]).getElement(), RenderPosition.BEFOREEND);
 }
 if (films.length > FILM_COUNT_PER_STEP) {
   let renderFilmCount = FILM_COUNT_PER_STEP;
@@ -95,7 +89,7 @@ if (films.length > FILM_COUNT_PER_STEP) {
     evt.preventDefault();
     films
       .slice(renderFilmCount, renderFilmCount + FILM_COUNT_PER_STEP)
-      .forEach((film) => renderPopup(filmsListContainerElement, film));
+      .forEach((film) => render(filmsListContainerElement, new FilmCardView(film).getElement(), RenderPosition.BEFOREEND));
 
     renderFilmCount += FILM_COUNT_PER_STEP;
 
@@ -110,3 +104,8 @@ renderTemplate(listComponent.getElement(), createsFilmsListExtraTemplate(), Rend
 
 
 render(siteFooterElement, new StatisticsView(countOfFilms[0]).getElement(), RenderPosition.BEFOREEND);
+
+const popupComponent = new PopupView();
+render(siteFooterElement, popupComponent.getElement(), RenderPosition.BEFOREEND);
+render(popupComponent.getElement(), new PopupInfoView(films[0]).getElement(), RenderPosition.BEFOREEND);
+render(popupComponent.getElement(), new PopupCommentsView(comments).getElement(), RenderPosition.BEFOREEND);
