@@ -9,8 +9,6 @@ import FilmCardView from "./view/film-card.js";
 import LoadMoreButtonView from "./view/load-more-button.js";
 import StatisticsView from "./view/stats.js";
 import PopupView from "./view/popup.js";
-// import PopupInfoView from "./view/popup-info.js";
-// import PopupCommentsView from "./view/popup-comments.js";
 import {generateFilm} from "./mock/film.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateComment} from "./mock/comments.js";
