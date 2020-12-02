@@ -29,7 +29,7 @@ const createsPopupTemplate = (film, commentItems) => {
   const date = releaseDate !== null ? dayjs(releaseDate).format(`D MMMM YYYY`) : ``;
 
   const commentItemsTemplate = commentItems
-    .map((x) => createCommentItemTemplate(x))
+    .map((comment) => createCommentItemTemplate(comment))
     .join(``);
 
   return `<section class="film-details">
