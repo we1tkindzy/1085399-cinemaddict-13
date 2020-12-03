@@ -1,16 +1,18 @@
-import {ctreatesProfileTemplate} from "./view/profile.js";
-import {cratesMainNavigationTemplate} from "./view/navigation.js";
-import {createsUsersRankTemplate} from "./view/rank.js";
-import {createsSortTemplate} from "./view/sort.js";
-import {createsListTemplate} from "./view/list.js";
-import {createsFilmCardTemplate} from "./view/film-card.js";
-import {createLoadMoreButtonTemplate} from "./view/load-more-button.js";
-import {createsStatisticsTemplate} from "./view/stats.js";
-import {createsPopupTemplate} from "./view/popup.js";
-import {createCommentsListTemplate} from "./view/comments.js";
+import ProfileView from "./view/profile.js";
+import MainNavigationView from "./view/navigation.js";
+// import UsersRankView from "./view/rank.js";
+import SortView from "./view/sort.js";
+import ListView from "./view/list.js";
+import FilmsListView from "./view/films-list.js";
+import {createsFilmsListExtraTemplate} from "./view/films-list-extra.js";
+import FilmCardView from "./view/film-card.js";
+import LoadMoreButtonView from "./view/load-more-button.js";
+import StatisticsView from "./view/stats.js";
+import PopupView from "./view/popup.js";
 import {generateFilm} from "./mock/film.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateComment} from "./mock/comments.js";
+import {renderTemplate, render, RenderPosition} from "./utils.js";
 
 
 const FILM_COUNT = 10;
@@ -23,51 +25,87 @@ const countOfFilms = generateFilter(films);
 const comments = new Array(FILM_COMMENT_COUNT).fill().map(generateComment);
 
 
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-
 const siteHeaderElement = document.querySelector(`.header`);
-render(siteHeaderElement, ctreatesProfileTemplate(), `beforeend`);
-
-
 const siteMainElement = document.querySelector(`.main`);
-render(siteMainElement, cratesMainNavigationTemplate(filters), `beforeend`);
-render(siteMainElement, createsUsersRankTemplate(), `beforeend`);
-render(siteMainElement, createsSortTemplate(), `beforeend`);
-render(siteMainElement, createsListTemplate(), `beforeend`);
+const siteFooterElement = document.querySelector(`.footer__statistics`);
+
+
+render(siteHeaderElement, new ProfileView().getElement(), RenderPosition.BEFOREEND);
+
+
+render(siteMainElement, new MainNavigationView(filters).getElement(), RenderPosition.BEFOREEND);
+// render(siteMainElement, new UsersRankView().getElement(), RenderPosition.BEFOREEND);
+render(siteMainElement, new SortView().getElement(), RenderPosition.BEFOREEND);
+
+const listComponent = new ListView();
+render(siteMainElement, listComponent.getElement(), RenderPosition.BEFOREEND);
+
+const filmsListComponent = new FilmsListView();
+render(listComponent.getElement(), filmsListComponent.getElement(), RenderPosition.BEFOREEND);
 
 const filmsListElement = document.querySelector(`.films-list`);
 const filmsListContainerElement = filmsListElement.querySelector(`.films-list__container`);
+
+const renderPopup = (filmCardComponent, films) => {
+  const popupComponent = new PopupView(films, comments);
+  const body = document.querySelector(`body`);
+
+  const openPopup = () => {
+    render(siteFooterElement, popupComponent.getElement(), RenderPosition.BEFOREEND);
+    siteFooterElement.appendChild(popupComponent.getElement());
+    body.classList.add(`hide-overflow`);
+  };
+  const closePopup = () => {
+    siteFooterElement.removeChild(popupComponent.getElement());
+    body.classList.remove(`hide-overflow`);
+  };
+
+  filmCardComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, () => {
+    openPopup();
+  });
+  filmCardComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, () => {
+    openPopup();
+  });
+  filmCardComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, () => {
+    openPopup();
+  });
+  popupComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
+    closePopup();
+  });
+}
+
 for (let i = 0; i < Math.min(films.length, FILM_COUNT_PER_STEP); i++) {
-  render(filmsListContainerElement, createsFilmCardTemplate(films[i]), `beforeend`);
+  const filmCardComponent = new FilmCardView(films[i]);
+  render(filmsListContainerElement, filmCardComponent.getElement(), RenderPosition.BEFOREEND);
+  renderPopup(filmCardComponent, films[i]);
 }
 if (films.length > FILM_COUNT_PER_STEP) {
   let renderFilmCount = FILM_COUNT_PER_STEP;
 
-  render(filmsListContainerElement, createLoadMoreButtonTemplate(), `beforeend`);
+  const loadMoreButtonComponent = new LoadMoreButtonView();
 
-  const loadMoreButton = filmsListContainerElement.querySelector(`.films-list__show-more`);
+  render(filmsListComponent.getElement(), loadMoreButtonComponent.getElement(), RenderPosition.BEFOREEND);
 
-  loadMoreButton.addEventListener(`click`, (evt) => {
+  loadMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
     evt.preventDefault();
     films
       .slice(renderFilmCount, renderFilmCount + FILM_COUNT_PER_STEP)
-      .forEach((film) => render(filmsListContainerElement, createsFilmCardTemplate(film), `beforeend`));
+      .forEach((film) => {
+        const filmCardComponent = new FilmCardView(film);
+        render(filmsListContainerElement, filmCardComponent.getElement(), RenderPosition.BEFOREEND);
+        renderPopup(filmCardComponent, film);
+      });
 
     renderFilmCount += FILM_COUNT_PER_STEP;
 
     if (renderFilmCount >= films.length) {
-      loadMoreButton.remove();
+      loadMoreButtonComponent.getElement().remove();
+      loadMoreButtonComponent.removeElement();
     }
   });
 }
 
+renderTemplate(listComponent.getElement(), createsFilmsListExtraTemplate(), RenderPosition.BEFOREEND);
 
-const siteFooterElement = document.querySelector(`.footer__statistics`);
-render(siteFooterElement, createsStatisticsTemplate(countOfFilms[0]), `beforeend`);
-render(siteFooterElement, createsPopupTemplate(films[0]), `beforeend`);
 
-const filmsCommentsTitleElement = siteFooterElement.querySelector(`.film-details__comments-title`);
-render(filmsCommentsTitleElement, createCommentsListTemplate(comments), `beforeend`);
+render(siteFooterElement, new StatisticsView(countOfFilms[0]).getElement(), RenderPosition.BEFOREEND);

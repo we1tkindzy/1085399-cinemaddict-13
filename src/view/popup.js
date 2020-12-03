@@ -1,10 +1,36 @@
 import dayjs from "dayjs";
+import {createElement} from "../utils.js";
 
-export const createsPopupTemplate = (film) => {
+const createCommentItemTemplate = (comment) => {
+  const {emoji, commentDate, author, message} = comment;
+
+  const date = commentDate !== null ? dayjs(commentDate).format(`MM/DD/YYYY h:mm`) : ``;
+
+  return (
+    `<li class="film-details__comment">
+      <span class="film-details__comment-emoji">
+        <img src="${emoji}" width="55" height="55" alt="emoji-smile">
+      </span>
+      <div>
+        <p class="film-details__comment-text">${message}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${author}</span>
+          <span class="film-details__comment-day">${date}</span>
+          <button class="film-details__comment-delete">Delete</button>
+        </p>
+      </div>
+    </li>`
+  );
+};
+
+const createsPopupTemplate = (film, commentItems) => {
   const {poster, name, originalName, producer, screenwriters, cast, rating, releaseDate, viewingTime, country, genre, description, ageRating} = film;
 
-
   const date = releaseDate !== null ? dayjs(releaseDate).format(`D MMMM YYYY`) : ``;
+
+  const commentItemsTemplate = commentItems
+    .map((comment) => createCommentItemTemplate(comment))
+    .join(``);
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -87,6 +113,9 @@ export const createsPopupTemplate = (film) => {
         <section class="film-details__comments-wrap">
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">5</span></h3>
 
+          <ul class="film-details__comments-list">
+            ${commentItemsTemplate}
+          </ul>
 
           <div class="film-details__new-comment">
             <div class="film-details__add-emoji-label"></div>
@@ -122,3 +151,27 @@ export const createsPopupTemplate = (film) => {
     </form>
   </section>`;
 };
+
+export default class Popup {
+  constructor(film, comment) {
+    this._film = film;
+    this._comment = comment;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createsPopupTemplate(this._film, this._comment);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

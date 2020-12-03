@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
+import {createElement} from "../utils.js";
 
-export const createsFilmCardTemplate = (film) => {
+const createsFilmCardTemplate = (film) => {
   const {poster, isAddToWatchlist, isWatched, isFavorite, name, rating, releaseDate, viewingTime, genre, description, comments} = film;
 
   const date = releaseDate !== null ? dayjs(releaseDate).format(`YYYY`) : ``;
@@ -17,21 +18,47 @@ export const createsFilmCardTemplate = (film) => {
     ? `film-card__controls-item--favorite film-card__controls-item--active`
     : `film-card__controls-item--favorite`;
 
-  return `<article class="film-card">
-    <h3 class="film-card__title">${name}</h3>
-    <p class="film-card__rating">${rating}</p>
-    <p class="film-card__info">
-      <span class="film-card__year">${date}</span>
-      <span class="film-card__duration">${viewingTime}</span>
-      <span class="film-card__genre">${genre}</span>
-    </p>
-    <img src="${poster}" alt="" class="film-card__poster">
-    <p class="film-card__description">${description}</p>
-    <a class="film-card__comments">${comments} comments</a>
-    <div class="film-card__controls">
-      <button class="film-card__controls-item button ${watchlistClassName}" type="button">Add to watchlist</button>
-      <button class="film-card__controls-item button ${watchedClassName}" type="button">Mark as watched</button>
-      <button class="film-card__controls-item button ${favoriteClassName}" type="button">Mark as favorite</button>
-    </div>
-  </article>`;
+  return (
+    `<article class="film-card">
+      <h3 class="film-card__title">${name}</h3>
+      <p class="film-card__rating">${rating}</p>
+      <p class="film-card__info">
+        <span class="film-card__year">${date}</span>
+        <span class="film-card__duration">${viewingTime}</span>
+        <span class="film-card__genre">${genre}</span>
+      </p>
+      <img src="${poster}" alt="" class="film-card__poster">
+      <p class="film-card__description">${description}</p>
+      <a class="film-card__comments">${comments} comments</a>
+      <div class="film-card__controls">
+        <button class="film-card__controls-item button ${watchlistClassName}" type="button">Add to watchlist</button>
+        <button class="film-card__controls-item button ${watchedClassName}" type="button">Mark as watched</button>
+        <button class="film-card__controls-item button ${favoriteClassName}" type="button">Mark as favorite</button>
+      </div>
+    </article>`
+  );
 };
+
+export default class FilmCard {
+  constructor(film) {
+    this._film = film;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createsFilmCardTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
