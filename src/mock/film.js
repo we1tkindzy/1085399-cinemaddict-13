@@ -169,9 +169,9 @@ export const generateFilm = () => {
 
   return {
     poster: generatePoster(),
-    isAddToWatchlist: Boolean(getRandomInteger(0, 1)),
-    isWatched: Boolean(getRandomInteger(0, 1)),
-    isFavorite: Boolean(getRandomInteger(0, 1)),
+    isAddToWatchlist: Boolean(getRandomInteger()),
+    isWatched: Boolean(getRandomInteger()),
+    isFavorite: Boolean(getRandomInteger()),
     name: generateName(),
     rating: getRandomInteger(0, 100) / 10,
     originalName: generateName(),
