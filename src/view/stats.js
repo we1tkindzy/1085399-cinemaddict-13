@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const createsStatisticsTemplate = (countsFilms) => {
   const {count} = countsFilms;
@@ -8,26 +8,13 @@ const createsStatisticsTemplate = (countsFilms) => {
   </section>`;
 };
 
-export default class Statistics {
+export default class Statistics extends AbstractView {
   constructor(countsFilms) {
+    super();
     this._countsFilms = countsFilms;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createsStatisticsTemplate(this._countsFilms);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const createCommentItemTemplate = (comment) => {
   const {emoji, commentDate, author, message} = comment;
@@ -152,26 +152,26 @@ const createsPopupTemplate = (film, commentItems) => {
   </section>`;
 };
 
-export default class Popup {
+export default class Popup extends AbstractView {
   constructor(film, comment) {
+    super();
     this._film = film;
     this._comment = comment;
-    this._element = null;
+
+    this._popupClickHandler = this._popupClickHandler.bind(this);
   }
 
   getTemplate() {
     return createsPopupTemplate(this._film, this._comment);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _popupClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.popupClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseButtonClickHandle(callback) {
+    this._callback.popupClick = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._popupClickHandler);
   }
 }
