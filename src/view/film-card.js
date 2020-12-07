@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const createsFilmCardTemplate = (film) => {
   const {poster, isAddToWatchlist, isWatched, isFavorite, name, rating, releaseDate, viewingTime, genre, description, comments} = film;
@@ -39,26 +39,35 @@ const createsFilmCardTemplate = (film) => {
   );
 };
 
-export default class FilmCard {
+export default class FilmCard extends AbstractView {
   constructor(film) {
+    super();
     this._film = film;
 
-    this._element = null;
+    this._cardClickHandler = this._cardClickHandler.bind(this);
   }
 
   getTemplate() {
     return createsFilmCardTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _cardClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.cardClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setPosterClickHandle(callback) {
+    this._callback.cardClick = callback;
+    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, this._cardClickHandler);
+  }
+
+  setTitleClickHandle(callback) {
+    this._callback.cardClick = callback;
+    this.getElement().querySelector(`.film-card__title`).addEventListener(`click`, this._cardClickHandler);
+  }
+
+  setCommentsClickHandle(callback) {
+    this._callback.cardClick = callback;
+    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._cardClickHandler);
   }
 }
