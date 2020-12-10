@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import AbstractView from "./abstract.js";
 
-const createsFilmCardTemplate = (film) => {
+const createsFilmCardItemTemplate = (film) => {
   const {poster, isAddToWatchlist, isWatched, isFavorite, name, rating, releaseDate, viewingTime, genre, description, comments} = film;
 
   const date = releaseDate !== null ? dayjs(releaseDate).format(`YYYY`) : ``;
@@ -37,6 +37,16 @@ const createsFilmCardTemplate = (film) => {
       </div>
     </article>`
   );
+};
+
+const createsFilmCardTemplate = (cardItems) => {
+  const cardItemsTemplate = (cardItems)
+    .map((card) => createsFilmCardItemTemplate(card))
+    .join(``);
+
+  return `<div class="films-list__container">
+    ${cardItemsTemplate}
+  </div>`;
 };
 
 export default class FilmCard extends AbstractView {
