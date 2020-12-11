@@ -6,8 +6,8 @@ import FilmsListContainerView from "../view/film-list-container.js";
 import FilmCardView from "../view/film-card.js";
 import LoadMoreButtonView from "../view/load-more-button.js";
 // import StatisticsView from "../view/stats.js";
-import PopupPresenter from "./film-popup.js";
-// import {updateItem} from "../utils/common.js";
+import PopupPresenter from "./film-card.js";
+import {updateItem} from "../utils/common.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 
 const FILM_COUNT_PER_STEP = 5;
@@ -19,7 +19,7 @@ export default class FilmList {
     this._siteFooterElement = siteFooterElement;
 
     this.renderFilmCount = FILM_COUNT_PER_STEP;
-    // this._popupPresenter = {};
+    this._cardPresenter = {};
 
     this._sortComponent = new SortView();
     this._listComponent = new ListView();
@@ -29,7 +29,8 @@ export default class FilmList {
 
     this._loadMoreButtonComponent = new LoadMoreButtonView();
 
-    // this._handleFilmChange = this._handleFilmChange.bind(this);
+    this._hendelFilmChange = this._hendelFilmChange.bind(this);
+    this._hendelModelChange = this._hendelModelChange.bind(this);
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
   }
 
@@ -47,15 +48,21 @@ export default class FilmList {
     this._renderBoard();
   }
 
-  // _hendelFilmChange(updateFilm) {
-  //   this._boardFilms = updateItem(this._boardFilms, updateFilm);
-  //   this._popupPresenter[updateFilm.id].init(updateFilm);
-  // }
+  _hendelModelChange() {
+    Object
+      .values(this._cardPresenter)
+      .forEach((presenter) => presenter.resetView());
+  }
 
-  _renderPopup(filmCardComponent, filmsArr) {
-    const popupPresenter = new PopupPresenter(this._siteFooterElement); //  , this._handleFilmChange
-    popupPresenter.init(filmCardComponent, filmsArr, this._comments);
-    // this._popupPresenter[filmsArr.id] = popupPresenter;
+  _hendelFilmChange(updatedFilm) {
+    this._boardFilms = updateItem(this._boardFilms, updatedFilm);
+    this._cardPresenter[updatedFilm.id].init(updatedFilm);
+  }
+
+  _renderPopup(filmCardComponent, film) {
+    const popupPresenter = new PopupPresenter(this._siteFooterElement, this._hendelFilmChange, this._hendelModelChange);
+    popupPresenter.init(filmCardComponent, film, this._comments);
+    this._cardPresenter[film.id] = popupPresenter;
   }
 
 
@@ -89,14 +96,14 @@ export default class FilmList {
   }
 
 
-  // _clearFilmsList() {
-  //   Object
-  //     .values(this._popupPresenter)
-  //     .forEach((presenter) => presenter.destroy());
-  //   this._popupPresenter = {};
-  //   this.renderFilmCount = FILM_COUNT_PER_STEP;
-  //   remove(this._loadMoreButtonComponent)
-  // }
+  _clearFilmsList() {
+    Object
+      .values(this._cardPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._cardPresenter = {};
+    this.renderFilmCount = FILM_COUNT_PER_STEP;
+    remove(this._loadMoreButtonComponent);
+  }
 
   _renderFilmsList() {
     this._renderFilmCards(0, Math.min(this._boardFilms.length, FILM_COUNT_PER_STEP));
