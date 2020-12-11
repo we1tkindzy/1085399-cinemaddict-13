@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import AbstractView from "./abstract.js";
 
-const createsFilmCardItemTemplate = (film) => {
+const createsFilmCardTemplate = (film) => {
   const {poster, isAddToWatchlist, isWatched, isFavorite, name, rating, releaseDate, viewingTime, genre, description, comments} = film;
 
   const date = releaseDate !== null ? dayjs(releaseDate).format(`YYYY`) : ``;
@@ -39,22 +39,15 @@ const createsFilmCardItemTemplate = (film) => {
   );
 };
 
-const createsFilmCardTemplate = (cardItems) => {
-  const cardItemsTemplate = (cardItems)
-    .map((card) => createsFilmCardItemTemplate(card))
-    .join(``);
-
-  return `<div class="films-list__container">
-    ${cardItemsTemplate}
-  </div>`;
-};
-
 export default class FilmCard extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
 
     this._cardClickHandler = this._cardClickHandler.bind(this);
+    // this._addWatchlistClickHandler = this._addWatchlistClickHandler.bind(this);
+    // this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    // this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -65,6 +58,23 @@ export default class FilmCard extends AbstractView {
     evt.preventDefault();
     this._callback.cardClick();
   }
+
+
+  // _addWatchlistClickHandler(evt) {
+  //   evt.preventDefault();
+  //   this._callback.addWatchlistClick();
+  // }
+
+  // _watchedClickHandler(evt) {
+  //   evt.preventDefault();
+  //   this._callback.watchedClick();
+  // }
+
+  // _favoriteClickHandler(evt) {
+  //   evt.preventDefault();
+  //   this._callback.favoriteClick();
+  // }
+
 
   setPosterClickHandle(callback) {
     this._callback.cardClick = callback;
@@ -80,4 +90,20 @@ export default class FilmCard extends AbstractView {
     this._callback.cardClick = callback;
     this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._cardClickHandler);
   }
+
+
+  // setAddWatchlisClickHandler(callback) {
+  //   this._callback.addWatchlistClick = callback;
+  //   this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._addWatchlistClickHandler);
+  // }
+
+  // setWatchedClickHandler(callback) {
+  //   this._callback.watchedClick = callback;
+  //   this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._watchedClickHandler);
+  // }
+
+  // setFavoriteClickHandler(callback) {
+  //   this._callback.favoriteClick = callback;
+  //   this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._favoriteClickHandler);
+  // }
 }
