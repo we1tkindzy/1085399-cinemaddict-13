@@ -3,14 +3,13 @@ import ListView from "../view/list.js";
 import ListEmptyView from "../view/list-empty.js";
 import FilmsListView from "../view/films-list.js";
 import FilmsListContainerView from "../view/film-list-container.js";
-import FilmCardView from "../view/film-card.js";
+// import FilmCardView from "../view/film-card.js";
 import LoadMoreButtonView from "../view/load-more-button.js";
-// import StatisticsView from "../view/stats.js";
-import PopupPresenter from "./film-card.js";
+import CardPresenter from "./film-card.js";
 import {updateItem} from "../utils/common.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 
-const FILM_COUNT_PER_STEP = 5;
+const FILM_COUNT_PER_STEP = 1;
 
 
 export default class FilmList {
@@ -59,10 +58,10 @@ export default class FilmList {
     this._cardPresenter[updatedFilm.id].init(updatedFilm);
   }
 
-  _renderPopup(filmCardComponent, film) {
-    const popupPresenter = new PopupPresenter(this._siteFooterElement, this._hendelFilmChange, this._hendelModelChange);
-    popupPresenter.init(filmCardComponent, film, this._comments);
-    this._cardPresenter[film.id] = popupPresenter;
+  _renderPopup(film) {
+    const cardPresenter = new CardPresenter(this._filmsListContainerView, this._siteFooterElement, this._hendelFilmChange, this._hendelModelChange);
+    cardPresenter.init(film, this._comments);
+    this._cardPresenter[film.id] = cardPresenter;
   }
 
 
@@ -70,9 +69,8 @@ export default class FilmList {
     this._boardFilms
       .slice(from, to)
       .forEach((film) => {
-        const filmCardComponent = new FilmCardView(film);
-        render(this._filmsListContainerView, filmCardComponent, RenderPosition.BEFOREEND);
-        this._renderPopup(filmCardComponent, film);
+
+        this._renderPopup(film);
       });
   }
 

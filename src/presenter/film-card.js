@@ -1,3 +1,4 @@
+import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup.js";
 import {render, RenderPosition, replace, appendChild, removeChild, remove} from "../utils/render.js";
 
@@ -7,7 +8,8 @@ const Mode = {
 };
 
 export default class Card {
-  constructor(siteFooterElement, changeData, changeMode) {
+  constructor(filmsListContainerView, siteFooterElement, changeData, changeMode) {
+    this._filmsListContainerView = filmsListContainerView;
     this._siteFooterElement = siteFooterElement;
     this._changeData = changeData;
     this._changeMode = changeMode;
@@ -26,13 +28,13 @@ export default class Card {
     this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
   }
 
-  init(filmCardComponent, film, comments) {
+  init(film, comments) {
     this._film = film;
 
     this._prevFilmCardComponent = this._filmCardComponent;
     this._prevPopupComponent = this._popupComponent;
 
-    this._filmCardComponent = filmCardComponent;
+    this._filmCardComponent = new FilmCardView(film);
     this._popupComponent = new PopupView(film, comments);
     this._body = document.querySelector(`body`);
 
@@ -46,15 +48,9 @@ export default class Card {
     this._filmCardComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClick);
     this._filmCardComponent.setWatchedClickHandler(this._hendleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
-  }
 
-  _openPopup() {
     if (this._prevFilmCardComponent === null || this._prevPopupComponent === null) {
-      render(this._siteFooterElement, this._popupComponent, RenderPosition.BEFOREEND);
-      appendChild(this._siteFooterElement, this._popupComponent);
-      this._body.classList.add(`hide-overflow`);
-      this._changeMode();
-      this._mode = Mode.POPUP;
+      render(this._filmsListContainerView, this._filmCardComponent, RenderPosition.BEFOREEND);
       return;
     }
 
@@ -79,6 +75,15 @@ export default class Card {
     if (this._mode !== Mode.CARD) {
       this._closePopup();
     }
+  }
+
+
+  _openPopup() {
+    render(this._siteFooterElement, this._popupComponent, RenderPosition.BEFOREEND);
+    appendChild(this._siteFooterElement, this._popupComponent);
+    this._body.classList.add(`hide-overflow`);
+    this._changeMode();
+    this._mode = Mode.POPUP;
   }
 
   _closePopup() {
