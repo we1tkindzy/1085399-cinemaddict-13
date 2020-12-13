@@ -142,8 +142,7 @@ export default class Card {
     );
   }
 
-  _hendlePopupClick(film) {
-    this._changeData(film);
+  _hendlePopupClick() {
     this._closePopup();
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }

@@ -9,7 +9,7 @@ import CardPresenter from "./film-card.js";
 import {updateItem} from "../utils/common.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 
-const FILM_COUNT_PER_STEP = 1;
+const FILM_COUNT_PER_STEP = 5;
 
 
 export default class FilmList {
@@ -55,12 +55,12 @@ export default class FilmList {
 
   _hendelFilmChange(updatedFilm) {
     this._boardFilms = updateItem(this._boardFilms, updatedFilm);
-    this._cardPresenter[updatedFilm.id].init(updatedFilm);
+    this._cardPresenter[updatedFilm.id].init(updatedFilm, this._comments);
   }
 
-  _renderPopup(film) {
+  _renderPopup(film, comments) {
     const cardPresenter = new CardPresenter(this._filmsListContainerView, this._siteFooterElement, this._hendelFilmChange, this._hendelModelChange);
-    cardPresenter.init(film, this._comments);
+    cardPresenter.init(film, comments);
     this._cardPresenter[film.id] = cardPresenter;
   }
 
@@ -70,7 +70,7 @@ export default class FilmList {
       .slice(from, to)
       .forEach((film) => {
 
-        this._renderPopup(film);
+        this._renderPopup(film, this._comments);
       });
   }
 
