@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import {getRandomInteger} from "../utils/common.js";
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateName = () => {
   const name = [
     `The Dance of Life`,
@@ -168,6 +170,7 @@ export const generateFilm = () => {
   const numberOfComments = (getRandomInteger(1, 5));
 
   return {
+    id: generateId(),
     poster: generatePoster(),
     isAddToWatchlist: Boolean(getRandomInteger()),
     isWatched: Boolean(getRandomInteger()),
