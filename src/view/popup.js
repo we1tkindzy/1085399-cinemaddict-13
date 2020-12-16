@@ -24,9 +24,21 @@ const createCommentItemTemplate = (comment) => {
 };
 
 const createsPopupTemplate = (film, commentItems) => {
-  const {poster, name, originalName, producer, screenwriters, cast, rating, releaseDate, viewingTime, country, genre, description, ageRating} = film;
+  const {poster, isAddToWatchlist, isWatched, isFavorite, name, originalName, producer, screenwriters, cast, rating, releaseDate, viewingTime, country, genre, description, ageRating} = film;
 
   const date = releaseDate !== null ? dayjs(releaseDate).format(`D MMMM YYYY`) : ``;
+
+  const watchlistClassName = isAddToWatchlist
+    ? `checked="checked"`
+    : ``;
+
+  const watchedClassName = isWatched
+    ? `checked="checked"`
+    : ``;
+
+  const favoriteClassName = isFavorite
+    ? `checked="checked"`
+    : ``;
 
   const commentItemsTemplate = commentItems
     .map((comment) => createCommentItemTemplate(comment))
@@ -98,13 +110,13 @@ const createsPopupTemplate = (film, commentItems) => {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${watchlistClassName}>
           <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${watchedClassName}>
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${favoriteClassName}>
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
       </div>
@@ -159,6 +171,9 @@ export default class Popup extends AbstractView {
     this._comment = comment;
 
     this._popupClickHandler = this._popupClickHandler.bind(this);
+    // this._addWatchlistClickHandler = this._addWatchlistClickHandler.bind(this);
+    // this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    // this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -170,8 +185,38 @@ export default class Popup extends AbstractView {
     this._callback.popupClick(this._film);
   }
 
+  // _addWatchlistClickHandler(evt) {
+  //   evt.preventDefault();
+  //   this._callback.addWatchlistClick();
+  // }
+
+  // _watchedClickHandler(evt) {
+  //   evt.preventDefault();
+  //   this._callback.watchedClick();
+  // }
+
+  // _favoriteClickHandler(evt) {
+  //   evt.preventDefault();
+  //   this._callback.favoriteClick();
+  // }
+
   setCloseButtonClickHandler(callback) {
     this._callback.popupClick = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._popupClickHandler);
   }
+
+  // setAddWatchlisClickHandler(callback) {
+  //   this._callback.addWatchlistClick = callback;
+  //   this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._addWatchlistClickHandler);
+  // }
+
+  // setWatchedClickHandler(callback) {
+  //   this._callback.watchedClick = callback;
+  //   this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedClickHandler);
+  // }
+
+  // setFavoriteClickHandler(callback) {
+  //   this._callback.favoriteClick = callback;
+  //   this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
+  // }
 }
