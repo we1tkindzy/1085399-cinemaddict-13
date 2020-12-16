@@ -6,8 +6,9 @@ import FilmsListContainerView from "../view/film-list-container.js";
 // import FilmCardView from "../view/film-card.js";
 import LoadMoreButtonView from "../view/load-more-button.js";
 import CardPresenter from "./film-card.js";
-import {updateItem} from "../utils/common.js";
+import {updateItem, sortFilmDateUp, sortFilmRating} from "../utils/common.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
+import {SortType} from "../utils/const.js";
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -19,6 +20,7 @@ export default class FilmList {
 
     this.renderFilmCount = FILM_COUNT_PER_STEP;
     this._cardPresenter = {};
+    this._currentSortType = SortType.DEFAULT;
 
     this._sortComponent = new SortView();
     this._listComponent = new ListView();
@@ -28,17 +30,19 @@ export default class FilmList {
 
     this._loadMoreButtonComponent = new LoadMoreButtonView();
 
-    this._hendelFilmChange = this._hendelFilmChange.bind(this);
-    this._hendelModelChange = this._hendelModelChange.bind(this);
+    this._handelFilmChange = this._handelFilmChange.bind(this);
+    this._handelModelChange = this._handelModelChange.bind(this);
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(boardFilms, comments) {
     this._boardFilms = boardFilms.slice();
     this._comments = comments.slice();
 
+    this._sourceBoardFilms = boardFilms.slice();
 
-    render(this._siteMainElement, this._sortComponent, RenderPosition.BEFOREEND);
+    this._renderSort();
 
     render(this._siteMainElement, this._listComponent, RenderPosition.BEFOREEND);
     render(this._listComponent, this._filmsListComponent, RenderPosition.AFTERBEGIN);
@@ -47,19 +51,49 @@ export default class FilmList {
     this._renderBoard();
   }
 
-  _hendelModelChange() {
+  _handelModelChange() {
     Object
       .values(this._cardPresenter)
       .forEach((presenter) => presenter.resetView());
   }
 
-  _hendelFilmChange(updatedFilm) {
+  _handelFilmChange(updatedFilm) {
     this._boardFilms = updateItem(this._boardFilms, updatedFilm);
     this._cardPresenter[updatedFilm.id].init(updatedFilm, this._comments);
   }
 
+  _sortFilms(sortType) {
+    switch (sortType) {
+      case SortType.DATE:
+        this._boardFilms.sort(sortFilmDateUp);
+        break;
+      case SortType.RATING:
+        this._boardFilms.sort(sortFilmRating);
+        break;
+      default:
+        this._boardFilms = this._sourceBoardFilms.slice();
+    }
+
+    this._currentSortType = sortType;
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._sortFilms(sortType);
+    this._clearFilmsList();
+    this._renderFilmsList();
+  }
+
+  _renderSort() {
+    render(this._siteMainElement, this._sortComponent, RenderPosition.BEFOREEND);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+  }
+
   _renderPopup(film, comments) {
-    const cardPresenter = new CardPresenter(this._filmsListContainerView, this._siteFooterElement, this._hendelFilmChange, this._hendelModelChange);
+    const cardPresenter = new CardPresenter(this._filmsListContainerView, this._siteFooterElement, this._handelFilmChange, this._handelModelChange);
     cardPresenter.init(film, comments);
     this._cardPresenter[film.id] = cardPresenter;
   }
