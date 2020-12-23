@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import {getRandomInteger} from "../utils/common.js";
+import {EMOJIS} from "../utils/const.js";
 
 const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
@@ -187,6 +188,8 @@ export const generateFilm = () => {
     genre: generateGenre(),
     description: generateDescription(),
     comments: numberOfComments,
+    addedEmoji: EMOJIS[0],
+    addedComment: `Select reaction below and write comment here`,
     ageRating: generateAgeRating()
   };
 };

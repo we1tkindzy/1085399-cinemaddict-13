@@ -1,17 +1,11 @@
 import dayjs from "dayjs";
+import {EMOJIS} from "../utils/const.js";
 import {getRandomInteger} from "../utils/common.js";
 
 const generateEmoji = () => {
-  const emoji = [
-    `./images/emoji/sleeping.png`,
-    `./images/emoji/smile.png`,
-    `./images/emoji/puke.png`,
-    `./images/emoji/angry.png`,
-  ];
+  const randomIndex = getRandomInteger(0, EMOJIS.length - 1);
 
-  const randomIndex = getRandomInteger(0, emoji.length - 1);
-
-  return emoji[randomIndex];
+  return EMOJIS[randomIndex];
 };
 
 const generateDate = () => {

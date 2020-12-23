@@ -36,9 +36,9 @@ export default class FilmList {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(boardFilms, comments) {
+  init(boardFilms) {
     this._boardFilms = boardFilms.slice();
-    this._comments = comments.slice();
+
 
     this._sourceBoardFilms = boardFilms.slice();
 
@@ -59,7 +59,7 @@ export default class FilmList {
 
   _handelFilmChange(updatedFilm) {
     this._boardFilms = updateItem(this._boardFilms, updatedFilm);
-    this._cardPresenter[updatedFilm.id].init(updatedFilm, this._comments);
+    this._cardPresenter[updatedFilm.id].init(updatedFilm);
   }
 
   _sortFilms(sortType) {
@@ -92,9 +92,9 @@ export default class FilmList {
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
-  _renderPopup(film, comments) {
+  _renderPopup(film) {
     const cardPresenter = new CardPresenter(this._filmsListContainerView, this._siteFooterElement, this._handelFilmChange, this._handelModelChange);
-    cardPresenter.init(film, comments);
+    cardPresenter.init(film);
     this._cardPresenter[film.id] = cardPresenter;
   }
 
@@ -104,7 +104,7 @@ export default class FilmList {
       .slice(from, to)
       .forEach((film) => {
 
-        this._renderPopup(film, this._comments);
+        this._renderPopup(film);
       });
   }
 
