@@ -26,7 +26,6 @@ const createCommentItemTemplate = (comment) => {
 
 
 const createAddCommentEmojiTemplate = (addedEmoji) => {
-
   return EMOJIS.map(function (emoji) {
     const addedEmojiClassName = addedEmoji === emoji
       ? `checked`
@@ -176,14 +175,14 @@ export default class Popup extends SmartView {
 
     this._popupClickHandler = this._popupClickHandler.bind(this);
 
-    this._addWatchlistClickHandler = this._addWatchlistClickHandler.bind(this);
-    this._watchedClickHandler = this._watchedClickHandler.bind(this);
-    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    // this._addWatchlistClickHandler = this._addWatchlistClickHandler.bind(this);
+    // this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    // this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
 
 
-    // this._addWatchlistChangeHandler = this._addWatchlistChangeHandler.bind(this);
-    // this._watchedChangeHandler = this._watchedChangeHandler.bind(this);
-    // this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
+    this._addWatchlistChangeHandler = this._addWatchlistChangeHandler.bind(this);
+    this._watchedChangeHandler = this._watchedChangeHandler.bind(this);
+    this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
 
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
@@ -242,75 +241,73 @@ export default class Popup extends SmartView {
     this._callback.popupClick(this._film);
   }
 
-  _addWatchlistClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.addWatchlistClick();
-  }
 
-  _watchedClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.watchedClick();
-  }
-
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClick();
-  }
-
-  // _addWatchlistChangeHandler(evt) {
+  // _addWatchlistClickHandler(evt) {
   //   evt.preventDefault();
-  //   console.log(this._data.isAddToWatchlist);
-  //   this.updateData(
-  //     Object.assign(
-  //       {},
-  //       this._data,
-  //       {
-  //         isAddToWatchlist: !this._data.isAddToWatchlist
-  //       }
-  //     )
-  //   );
-  //   console.log(this._data);
+  //   this._callback.addWatchlistClick();
   // }
 
-  // _watchedChangeHandler(evt) {
+  // _watchedClickHandler(evt) {
   //   evt.preventDefault();
-  //   this.updateData({
-  //     isWatched: Object.assign(
-  //         {},
-  //         this._data.isWatched,
-  //         {[evt.target.value]: evt.target.checked}
-  //     )
-  //   });
+  //   this._callback.watchedClick();
   // }
 
-  // _favoriteChangeHandler(evt) {
+  // _favoriteClickHandler(evt) {
   //   evt.preventDefault();
-  //   this.updateData({
-  //     isFavorite: Object.assign(
-  //         {},
-  //         this._data.isFavorite,
-  //         {[evt.target.value]: evt.target.checked}
-  //     )
-  //   });
+  //   this._callback.favoriteClick();
   // }
+
+
+  _addWatchlistChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData(
+        Object.assign(
+            {},
+            this._data,
+            {isAddToWatchlist: !this._data.isAddToWatchlist}
+        )
+    );
+  }
+
+  _watchedChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData(
+        Object.assign(
+            {},
+            this._data,
+            {isWatched: !this._data.isWatched}
+        )
+    );
+  }
+
+  _favoriteChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData(
+        Object.assign(
+            {},
+            this._data,
+            {isFavorite: !this._data.isFavorite}
+        )
+    );
+  }
 
   setCloseButtonClickHandler(callback) {
     this._callback.popupClick = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._popupClickHandler);
   }
 
-  setAddWatchlisClickHandler(callback) {
-    this._callback.addWatchlistClick = callback;
-    this.getElement().querySelector(`#watchlist`).addEventListener(`click`, this._addWatchlistClickHandler);
-  }
+  // setAddWatchlisClickHandler(callback) {
+  //   this._callback.addWatchlistClick = callback;
+  //   this.getElement().querySelector(`#watchlist`).addEventListener(`click`, this._addWatchlistClickHandler);
+  // }
 
-  setWatchedClickHandler(callback) {
-    this._callback.watchedClick = callback;
-    this.getElement().querySelector(`#watched`).addEventListener(`click`, this._watchedClickHandler);
-  }
+  // setWatchedClickHandler(callback) {
+  //   this._callback.watchedClick = callback;
+  //   this.getElement().querySelector(`#watched`).addEventListener(`click`, this._watchedClickHandler);
+  // }
 
-  setFavoriteClickHandler(callback) {
-    this._callback.favoriteClick = callback;
-    this.getElement().querySelector(`#favorite`).addEventListener(`click`, this._favoriteClickHandler);
-  }
+  // setFavoriteClickHandler(callback) {
+  //   this._callback.favoriteClick = callback;
+  //   this.getElement().querySelector(`#favorite`).addEventListener(`click`, this._favoriteClickHandler);
+  // }
 }
