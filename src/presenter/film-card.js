@@ -27,6 +27,10 @@ export default class Card {
     this._hendleAddWatchlisClick = this._hendleAddWatchlisClick.bind(this);
     this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
     this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
+
+    this._hendleAddWatchlisClicks = this._hendleAddWatchlisClicks.bind(this);
+    this._hendleWatchedClicks = this._hendleWatchedClicks.bind(this);
+    this._hendleFavoriteClicks = this._hendleFavoriteClicks.bind(this);
   }
 
   init(film) {
@@ -53,20 +57,24 @@ export default class Card {
     this._filmCardComponent.setWatchedClickHandler(this._hendleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
 
-    this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClick);
-    this._popupComponent.setWatchedClickHandler(this._hendleWatchedClick);
-    this._popupComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
+    this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClicks);
+    this._popupComponent.setWatchedClickHandler(this._hendleWatchedClicks);
+    this._popupComponent.setFavoriteClickHandler(this._hendleFavoriteClicks);
 
     if (this._prevFilmCardComponent === null || this._prevPopupComponent === null) {
       render(this._filmsListContainerView, this._filmCardComponent, RenderPosition.BEFOREEND);
       return;
     }
 
+    if (this._mode === Mode.CARD) {
+      replace(this._filmCardComponent, this._prevFilmCardComponent);
 
-    replace(this._filmCardComponent, this._prevFilmCardComponent);
+    }
 
-    replace(this._popupComponent, this._prevPopupComponent);
-
+    if (this._mode === Mode.POPUP) {
+      replace(this._filmCardComponent, this._prevFilmCardComponent);
+      replace(this._popupComponent, this._prevPopupComponent);
+    }
 
     remove(this._prevFilmCardComponent);
     remove(this._prevPopupComponent);
@@ -137,6 +145,43 @@ export default class Card {
   }
 
   _hendleFavoriteClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isFavorite: !this._film.isFavorite
+            }
+        )
+    );
+  }
+
+
+  _hendleAddWatchlisClicks() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isAddToWatchlist: !this._film.isAddToWatchlist
+            }
+        )
+    );
+  }
+
+  _hendleWatchedClicks() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isWatched: !this._film.isWatched
+            }
+        )
+    );
+  }
+
+  _hendleFavoriteClicks() {
     this._changeData(
         Object.assign(
             {},
