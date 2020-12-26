@@ -68,7 +68,6 @@ export default class Card {
 
     if (this._mode === Mode.CARD) {
       replace(this._filmCardComponent, this._prevFilmCardComponent);
-
     }
 
     if (this._mode === Mode.POPUP) {
