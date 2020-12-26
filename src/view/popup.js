@@ -175,14 +175,14 @@ export default class Popup extends SmartView {
 
     this._popupClickHandler = this._popupClickHandler.bind(this);
 
-    // this._addWatchlistClickHandler = this._addWatchlistClickHandler.bind(this);
-    // this._watchedClickHandler = this._watchedClickHandler.bind(this);
-    // this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._addWatchlistClickHandler = this._addWatchlistClickHandler.bind(this);
+    this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
 
 
-    this._addWatchlistChangeHandler = this._addWatchlistChangeHandler.bind(this);
-    this._watchedChangeHandler = this._watchedChangeHandler.bind(this);
-    this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
+    // this._addWatchlistChangeHandler = this._addWatchlistChangeHandler.bind(this);
+    // this._watchedChangeHandler = this._watchedChangeHandler.bind(this);
+    // this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
 
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
@@ -211,15 +211,15 @@ export default class Popup extends SmartView {
       .addEventListener(`input`, this._descriptionInputHandler);
 
 
-    this.getElement()
-      .querySelector(`#watchlist`)
-      .addEventListener(`change`, this._addWatchlistChangeHandler);
-    this.getElement()
-      .querySelector(`#watched`)
-      .addEventListener(`change`, this._watchedChangeHandler);
-    this.getElement()
-      .querySelector(`#favorite`)
-      .addEventListener(`change`, this._favoriteChangeHandler);
+    // this.getElement()
+    //   .querySelector(`#watchlist`)
+    //   .addEventListener(`change`, this._addWatchlistChangeHandler);
+    // this.getElement()
+    //   .querySelector(`#watched`)
+    //   .addEventListener(`change`, this._watchedChangeHandler);
+    // this.getElement()
+    //   .querySelector(`#favorite`)
+    //   .addEventListener(`change`, this._favoriteChangeHandler);
   }
 
   _descriptionInputHandler(evt) {
@@ -242,72 +242,72 @@ export default class Popup extends SmartView {
   }
 
 
-  // _addWatchlistClickHandler(evt) {
-  //   evt.preventDefault();
-  //   this._callback.addWatchlistClick();
-  // }
-
-  // _watchedClickHandler(evt) {
-  //   evt.preventDefault();
-  //   this._callback.watchedClick();
-  // }
-
-  // _favoriteClickHandler(evt) {
-  //   evt.preventDefault();
-  //   this._callback.favoriteClick();
-  // }
-
-
-  _addWatchlistChangeHandler(evt) {
+  _addWatchlistClickHandler(evt) {
     evt.preventDefault();
-    this.updateData(
-        Object.assign(
-            {},
-            this._data,
-            {isAddToWatchlist: !this._data.isAddToWatchlist}
-        )
-    );
+    this._callback.addWatchlistClick();
   }
 
-  _watchedChangeHandler(evt) {
+  _watchedClickHandler(evt) {
     evt.preventDefault();
-    this.updateData(
-        Object.assign(
-            {},
-            this._data,
-            {isWatched: !this._data.isWatched}
-        )
-    );
+    this._callback.watchedClick();
   }
 
-  _favoriteChangeHandler(evt) {
+  _favoriteClickHandler(evt) {
     evt.preventDefault();
-    this.updateData(
-        Object.assign(
-            {},
-            this._data,
-            {isFavorite: !this._data.isFavorite}
-        )
-    );
+    this._callback.favoriteClick();
   }
+
+
+  // _addWatchlistChangeHandler(evt) {
+  //   evt.preventDefault();
+  //   this.updateData(
+  //       Object.assign(
+  //           {},
+  //           this._data,
+  //           {isAddToWatchlist: !this._data.isAddToWatchlist}
+  //       )
+  //   );
+  // }
+
+  // _watchedChangeHandler(evt) {
+  //   evt.preventDefault();
+  //   this.updateData(
+  //       Object.assign(
+  //           {},
+  //           this._data,
+  //           {isWatched: !this._data.isWatched}
+  //       )
+  //   );
+  // }
+
+  // _favoriteChangeHandler(evt) {
+  //   evt.preventDefault();
+  //   this.updateData(
+  //       Object.assign(
+  //           {},
+  //           this._data,
+  //           {isFavorite: !this._data.isFavorite}
+  //       )
+  //   );
+  // }
 
   setCloseButtonClickHandler(callback) {
     this._callback.popupClick = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._popupClickHandler);
   }
 
-  // setAddWatchlisClickHandler(callback) {
-  //   this._callback.addWatchlistClick = callback;
-  //   this.getElement().querySelector(`#watchlist`).addEventListener(`click`, this._addWatchlistClickHandler);
-  // }
+  setAddWatchlisClickHandler(callback) {
+    this._callback.addWatchlistClick = callback;
+    this.getElement().querySelector(`#watchlist`).addEventListener(`click`, this._addWatchlistClickHandler);
+  }
 
-  // setWatchedClickHandler(callback) {
-  //   this._callback.watchedClick = callback;
-  //   this.getElement().querySelector(`#watched`).addEventListener(`click`, this._watchedClickHandler);
-  // }
+  setWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+    this.getElement().querySelector(`#watched`).addEventListener(`click`, this._watchedClickHandler);
+  }
 
-  // setFavoriteClickHandler(callback) {
-  //   this._callback.favoriteClick = callback;
-  //   this.getElement().querySelector(`#favorite`).addEventListener(`click`, this._favoriteClickHandler);
-  // }
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`#favorite`).addEventListener(`click`, this._favoriteClickHandler);
+  }
 }

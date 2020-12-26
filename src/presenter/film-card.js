@@ -53,22 +53,20 @@ export default class Card {
     this._filmCardComponent.setWatchedClickHandler(this._hendleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
 
-    // this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClick);
-    // this._popupComponent.setWatchedClickHandler(this._hendleWatchedClick);
-    // this._popupComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
+    this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClick);
+    this._popupComponent.setWatchedClickHandler(this._hendleWatchedClick);
+    this._popupComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
 
     if (this._prevFilmCardComponent === null || this._prevPopupComponent === null) {
       render(this._filmsListContainerView, this._filmCardComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-    if (this._mode === Mode.CARD) {
-      replace(this._filmCardComponent, this._prevFilmCardComponent);
-    }
 
-    if (this._mode === Mode.POPUP) {
-      replace(this._popupComponent, this._prevPopupComponent);
-    }
+    replace(this._filmCardComponent, this._prevFilmCardComponent);
+
+    replace(this._popupComponent, this._prevPopupComponent);
+
 
     remove(this._prevFilmCardComponent);
     remove(this._prevPopupComponent);
