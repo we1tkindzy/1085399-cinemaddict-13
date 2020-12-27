@@ -1,5 +1,6 @@
 import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup.js";
+import {generateComment} from "../mock/comments.js";
 import {render, RenderPosition, replace, appendChild, removeChild, remove} from "../utils/render.js";
 
 const Mode = {
@@ -26,16 +27,23 @@ export default class Card {
     this._hendleAddWatchlisClick = this._hendleAddWatchlisClick.bind(this);
     this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
     this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
+
+    this._hendleAddWatchlisClick = this._hendleAddWatchlisClick.bind(this);
+    this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
+    this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
   }
 
-  init(film, comments) {
+  init(film) {
     this._film = film;
+
+    const comments = new Array(this._film.comments).fill().map(generateComment);
+    this._comments = comments.slice();
 
     this._prevFilmCardComponent = this._filmCardComponent;
     this._prevPopupComponent = this._popupComponent;
 
     this._filmCardComponent = new FilmCardView(film);
-    this._popupComponent = new PopupView(film, comments);
+    this._popupComponent = new PopupView(film, this._comments);
     this._body = document.querySelector(`body`);
 
 
@@ -49,9 +57,9 @@ export default class Card {
     this._filmCardComponent.setWatchedClickHandler(this._hendleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
 
-    // this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClick);
-    // this._popupComponent.setWatchedClickHandler(this._hendleWatchedClick);
-    // this._popupComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
+    this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClick);
+    this._popupComponent.setWatchedClickHandler(this._hendleWatchedClick);
+    this._popupComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
 
     if (this._prevFilmCardComponent === null || this._prevPopupComponent === null) {
       render(this._filmsListContainerView, this._filmCardComponent, RenderPosition.BEFOREEND);
@@ -63,6 +71,7 @@ export default class Card {
     }
 
     if (this._mode === Mode.POPUP) {
+      replace(this._filmCardComponent, this._prevFilmCardComponent);
       replace(this._popupComponent, this._prevPopupComponent);
     }
 
@@ -145,6 +154,7 @@ export default class Card {
         )
     );
   }
+
 
   _hendlePopupClick() {
     this._closePopup();

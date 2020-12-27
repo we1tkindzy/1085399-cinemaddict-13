@@ -4,7 +4,7 @@ import AbstractView from "./abstract.js";
 const createsFilmCardTemplate = (film) => {
   const {poster, isAddToWatchlist, isWatched, isFavorite, name, rating, releaseDate, viewingTime, genre, description, comments} = film;
 
-  const date = releaseDate !== null ? dayjs(releaseDate).format(`YYYY`) : ``;
+  const date = dayjs(releaseDate).format(`YYYY`);
 
   const watchlistClassName = isAddToWatchlist
     ? `film-card__controls-item--add-to-watchlist film-card__controls-item--active`

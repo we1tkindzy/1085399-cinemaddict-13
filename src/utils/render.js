@@ -75,7 +75,7 @@ export const removeChild = (parent, child) => {
   }
 
   if (parent === null || child === null) {
-    throw new Error(`Can't append unexisting elements.`);
+    throw new Error(`Can't remove unexisting elements.`);
   }
 
   parent.removeChild(child);
