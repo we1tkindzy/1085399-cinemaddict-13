@@ -28,9 +28,9 @@ export default class Card {
     this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
     this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
 
-    this._hendleAddWatchlisClicks = this._hendleAddWatchlisClicks.bind(this);
-    this._hendleWatchedClicks = this._hendleWatchedClicks.bind(this);
-    this._hendleFavoriteClicks = this._hendleFavoriteClicks.bind(this);
+    this._hendleAddWatchlisClick = this._hendleAddWatchlisClick.bind(this);
+    this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
+    this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
   }
 
   init(film) {
@@ -57,9 +57,9 @@ export default class Card {
     this._filmCardComponent.setWatchedClickHandler(this._hendleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
 
-    this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClicks);
-    this._popupComponent.setWatchedClickHandler(this._hendleWatchedClicks);
-    this._popupComponent.setFavoriteClickHandler(this._hendleFavoriteClicks);
+    this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClick);
+    this._popupComponent.setWatchedClickHandler(this._hendleWatchedClick);
+    this._popupComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
 
     if (this._prevFilmCardComponent === null || this._prevPopupComponent === null) {
       render(this._filmsListContainerView, this._filmCardComponent, RenderPosition.BEFOREEND);
@@ -155,42 +155,6 @@ export default class Card {
     );
   }
 
-
-  _hendleAddWatchlisClicks() {
-    this._changeData(
-        Object.assign(
-            {},
-            this._film,
-            {
-              isAddToWatchlist: !this._film.isAddToWatchlist
-            }
-        )
-    );
-  }
-
-  _hendleWatchedClicks() {
-    this._changeData(
-        Object.assign(
-            {},
-            this._film,
-            {
-              isWatched: !this._film.isWatched
-            }
-        )
-    );
-  }
-
-  _hendleFavoriteClicks() {
-    this._changeData(
-        Object.assign(
-            {},
-            this._film,
-            {
-              isFavorite: !this._film.isFavorite
-            }
-        )
-    );
-  }
 
   _hendlePopupClick() {
     this._closePopup();
