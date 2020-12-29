@@ -1,11 +1,22 @@
 import dayjs from "dayjs";
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
+import {getTimeFromMins} from "../utils/common.js";
 import SmartView from "./smart.js";
 import {EMOJIS} from "../utils/const.js";
 
 const createCommentItemTemplate = (comment) => {
   const {emoji, commentDate, author, message} = comment;
 
-  const date = commentDate !== null ? dayjs(commentDate).format(`MM/DD/YYYY h:mm`) : ``;
+
+  // const date = commentDate !== null ? dayjs(commentDate).format(`MM/DD/YYYY h:mm`) : ``;
+
+  let date = dayjs(commentDate).fromNow(true) + ` ago`;
+
+  if (date === `a day ago` || date === `a few seconds ago`) {
+    date = `today`;
+  }
+
 
   return (
     `<li class="film-details__comment">
@@ -44,6 +55,8 @@ const createsPopupTemplate = (film, commentItems) => {
     viewingTime, country, genre, description, comments, addedEmoji, addedComment, ageRating} = film;
 
   const date = dayjs(releaseDate).format(`D MMMM YYYY`);
+
+  const filmTime = getTimeFromMins(viewingTime);
 
   const watchlistClassName = isAddToWatchlist
     ? `checked`
@@ -107,7 +120,7 @@ const createsPopupTemplate = (film, commentItems) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${viewingTime}</td>
+                <td class="film-details__cell">${filmTime}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
@@ -179,11 +192,6 @@ export default class Popup extends SmartView {
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
 
-
-    // this._addWatchlistChangeHandler = this._addWatchlistChangeHandler.bind(this);
-    // this._watchedChangeHandler = this._watchedChangeHandler.bind(this);
-    // this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
-
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
 
@@ -209,17 +217,6 @@ export default class Popup extends SmartView {
     this.getElement()
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`input`, this._descriptionInputHandler);
-
-
-    // this.getElement()
-    //   .querySelector(`#watchlist`)
-    //   .addEventListener(`change`, this._addWatchlistChangeHandler);
-    // this.getElement()
-    //   .querySelector(`#watched`)
-    //   .addEventListener(`change`, this._watchedChangeHandler);
-    // this.getElement()
-    //   .querySelector(`#favorite`)
-    //   .addEventListener(`change`, this._favoriteChangeHandler);
   }
 
   _descriptionInputHandler(evt) {
@@ -257,39 +254,6 @@ export default class Popup extends SmartView {
     this._callback.favoriteClick();
   }
 
-
-  // _addWatchlistChangeHandler(evt) {
-  //   evt.preventDefault();
-  //   this.updateData(
-  //       Object.assign(
-  //           {},
-  //           this._data,
-  //           {isAddToWatchlist: !this._data.isAddToWatchlist}
-  //       )
-  //   );
-  // }
-
-  // _watchedChangeHandler(evt) {
-  //   evt.preventDefault();
-  //   this.updateData(
-  //       Object.assign(
-  //           {},
-  //           this._data,
-  //           {isWatched: !this._data.isWatched}
-  //       )
-  //   );
-  // }
-
-  // _favoriteChangeHandler(evt) {
-  //   evt.preventDefault();
-  //   this.updateData(
-  //       Object.assign(
-  //           {},
-  //           this._data,
-  //           {isFavorite: !this._data.isFavorite}
-  //       )
-  //   );
-  // }
 
   setCloseButtonClickHandler(callback) {
     this._callback.popupClick = callback;
