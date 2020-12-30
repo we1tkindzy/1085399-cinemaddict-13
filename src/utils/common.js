@@ -29,3 +29,12 @@ export const sortFilmDateUp = (filmA, filmB) => {
 export const sortFilmRating = (filmA, filmB) => {
   return dayjs(filmB.rating * 10).diff(dayjs(filmA.rating * 10));
 };
+
+export const getTimeFromMins = (mins) => {
+  let hours = Math.trunc(mins / 60) + `h `;
+  if (hours === 0 + `h `) {
+    hours = ``;
+  }
+  const minutes = mins % 60;
+  return hours + minutes + `m`;
+};

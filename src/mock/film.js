@@ -98,18 +98,36 @@ const generateAgeRating = () => {
 
 const generateDate = () => {
   const maxYearsGap = 50;
-  const YearGap = getRandomInteger(-maxYearsGap, 0);
+  const yearGap = getRandomInteger(-maxYearsGap, 0);
 
-  return dayjs().add(YearGap, `year`).toDate();
+  return dayjs().add(yearGap, `year`).toDate();
 };
 
 
 const generateViewingTime = () => {
-  const maxHours = getRandomInteger(1, 3);
-  const maxMinutes = getRandomInteger(1, 59);
+  // const maxHoursGap = 3;
+  // const hoursGap = getRandomInteger(1, maxHoursGap);
+  // const maxHours = dayjs().add(hoursGap, `h`).format(`h`);
+
+  // const maxMinutesGap = 59;
+  // const minutesGap = getRandomInteger(-maxMinutesGap, 0);
+  // const maxMinutes = dayjs().add(minutesGap, `m`).format(`m`);
 
 
-  return (maxHours + `h ` + maxMinutes + `m`);
+  // return (maxHours + `h ` + maxMinutes + `m`);
+
+  const viewingTime = [
+    `115`,
+    `70`,
+    `146`,
+    `150`,
+    `99`,
+    `55`
+  ];
+
+  const randomIndex = getRandomInteger(0, viewingTime.length - 1);
+
+  return viewingTime[randomIndex];
 };
 
 const generatePoster = () => {
