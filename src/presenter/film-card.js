@@ -2,6 +2,7 @@ import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup.js";
 import {generateComment} from "../mock/comments.js";
 import {render, RenderPosition, replace, appendChild, removeChild, remove} from "../utils/render.js";
+import {UserAction, UpdateType} from "../utils/const.js";
 
 const Mode = {
   CARD: `CARD`,
@@ -121,6 +122,8 @@ export default class Card {
 
   _hendleAddWatchlisClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,
@@ -133,6 +136,8 @@ export default class Card {
 
   _hendleWatchedClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,
@@ -145,6 +150,8 @@ export default class Card {
 
   _hendleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,

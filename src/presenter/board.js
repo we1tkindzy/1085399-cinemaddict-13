@@ -6,7 +6,7 @@ import FilmsListContainerView from "../view/film-list-container.js";
 // import FilmCardView from "../view/film-card.js";
 import LoadMoreButtonView from "../view/load-more-button.js";
 import FilmPresenter from "./film-card.js";
-import {updateItem, sortFilmDateUp, sortFilmRating} from "../utils/common.js";
+import {sortFilmDateUp, sortFilmRating} from "../utils/common.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {SortType} from "../utils/const.js";
 
@@ -31,10 +31,14 @@ export default class FilmList {
 
     this._loadMoreButtonComponent = new LoadMoreButtonView();
 
-    this._handelFilmChange = this._handelFilmChange.bind(this);
+    // this._handelFilmChange = this._handelFilmChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handelModelChange = this._handelModelChange.bind(this);
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._filmsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -66,25 +70,26 @@ export default class FilmList {
       .forEach((presenter) => presenter.resetView());
   }
 
-  _handelFilmChange(updatedFilm) {
-    // this._boardFilms = updateItem(this._boardFilms, updatedFilm);
-    this._filmPresenter[updatedFilm.id].init(updatedFilm);
+  // _handelFilmChange(updatedFilm) {
+  //   // this._boardFilms = updateItem(this._boardFilms, updatedFilm);
+  //   this._filmPresenter[updatedFilm.id].init(updatedFilm);
+  // }
+
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
   }
 
-  // _sortFilms(sortType) {
-  //   switch (sortType) {
-  //     case SortType.DATE:
-  //       this._boardFilms.sort(sortFilmDateUp);
-  //       break;
-  //     case SortType.RATING:
-  //       this._boardFilms.sort(sortFilmRating);
-  //       break;
-  //     default:
-  //       this._boardFilms = this._sourceBoardFilms.slice();
-  //   }
-
-  //   this._currentSortType = sortType;
-  // }
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
+  }
 
   _handleSortTypeChange(sortType) {
     if (this._currentSortType === sortType) {
@@ -102,7 +107,7 @@ export default class FilmList {
   }
 
   _renderFilm(film) {
-    const filmPresenter = new FilmPresenter(this._filmsListContainerView, this._siteFooterElement, this._handelFilmChange, this._handelModelChange);
+    const filmPresenter = new FilmPresenter(this._filmsListContainerView, this._siteFooterElement, this._handleViewAction, this._handelModelChange);
     filmPresenter.init(film);
     this._filmPresenter[film.id] = filmPresenter;
   }
@@ -117,8 +122,6 @@ export default class FilmList {
   }
 
   _handleLoadMoreButtonClick() {
-    // this._renderFilmCards(this.renderFilmCount, this.renderFilmCount + FILM_COUNT_PER_STEP);
-    // this.renderFilmCount += FILM_COUNT_PER_STEP;
     const filmCount = this._getFilms().length;
 
     const newRenderedFilmCount = Math.min(filmCount, this._renderedFilmCount + FILM_COUNT_PER_STEP);
@@ -127,10 +130,9 @@ export default class FilmList {
     this._renderFilmCards(films);
     this._renderedFilmCount = newRenderedFilmCount;
 
-    if (this.renderFilmCount >= filmCount) {
+    if (this._renderedFilmCount >= filmCount) {
       remove(this._loadMoreButtonComponent);
     }
-    ////////
   }
 
   _renderLoadMoreButton() {
