@@ -52,7 +52,7 @@ const createAddCommentEmojiTemplate = (addedEmoji) => {
 
 const createsPopupTemplate = (film, commentItems) => {
   const {poster, isAddToWatchlist, isWatched, isFavorite, name, originalName, producer, screenwriters, cast, rating, releaseDate,
-    viewingTime, country, genre, description, comments, addedEmoji, addedComment, ageRating} = film;
+    viewingTime, country, genre, description, addedEmoji, addedComment, ageRating} = film;
 
   const date = dayjs(releaseDate).format(`D MMMM YYYY`);
 
@@ -69,6 +69,8 @@ const createsPopupTemplate = (film, commentItems) => {
   const favoriteClassName = isFavorite
     ? `checked`
     : ``;
+
+  const commentsCount = commentItems.length;
 
   const commentItemsTemplate = commentItems
     .map((comment) => createCommentItemTemplate(comment))
@@ -155,7 +157,7 @@ const createsPopupTemplate = (film, commentItems) => {
 
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments}</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
           <ul class="film-details__comments-list">
             ${commentItemsTemplate}

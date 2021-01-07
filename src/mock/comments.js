@@ -2,6 +2,8 @@ import dayjs from "dayjs";
 import {EMOJIS} from "../utils/const.js";
 import {getRandomInteger} from "../utils/common.js";
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateEmoji = () => {
   const randomIndex = getRandomInteger(0, EMOJIS.length - 1);
 
@@ -52,6 +54,7 @@ export const generateComment = () => {
   const commentDate = generateDate();
 
   return {
+    id: generateId(),
     emoji: generateEmoji(),
     commentDate,
     author: generateAuthor(),

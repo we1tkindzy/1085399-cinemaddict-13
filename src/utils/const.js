@@ -17,3 +17,10 @@ export const UpdateType = {
   MINOR: `MINOR`,
   MAJOR: `MAJOR`
 };
+
+export const FilterType = {
+  ALL: `all`,
+  WATCHLIST: `watchlist`,
+  WATCHED: `watched`,
+  FAVORITE: `favorite`
+};

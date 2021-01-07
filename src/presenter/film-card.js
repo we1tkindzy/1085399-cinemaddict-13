@@ -3,6 +3,10 @@ import PopupView from "../view/popup.js";
 import {generateComment} from "../mock/comments.js";
 import {render, RenderPosition, replace, appendChild, removeChild, remove} from "../utils/render.js";
 import {UserAction, UpdateType} from "../utils/const.js";
+import {getRandomInteger} from "../utils/common.js";
+
+const COMMENT_COUNT_MAX = 5;
+const COMMENT_COUNT_MIN = 1;
 
 const Mode = {
   CARD: `CARD`,
@@ -29,15 +33,15 @@ export default class Card {
     this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
     this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
 
-    this._hendleAddWatchlisClick = this._hendleAddWatchlisClick.bind(this);
-    this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
-    this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
+    // this._hendleAddWatchlisClick = this._hendleAddWatchlisClick.bind(this);
+    // this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
+    // this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
   }
 
   init(film) {
     this._film = film;
 
-    const comments = new Array(this._film.comments).fill().map(generateComment);
+    const comments = new Array(getRandomInteger(COMMENT_COUNT_MIN, COMMENT_COUNT_MAX)).fill().map(generateComment);
     this._comments = comments.slice();
 
     this._prevFilmCardComponent = this._filmCardComponent;
