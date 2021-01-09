@@ -33,9 +33,11 @@ export default class Card {
     this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
     this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
 
-    // this._hendleAddWatchlisClick = this._hendleAddWatchlisClick.bind(this);
-    // this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
-    // this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
+    //
+
+    this._hendleAddWatchlisPopupClick = this._hendleAddWatchlisPopupClick.bind(this);
+    this._hendleWatchedPopupClick = this._hendleWatchedPopupClick.bind(this);
+    this._hendleFavoritePopupClick = this._hendleFavoritePopupClick.bind(this);
   }
 
   init(film) {
@@ -62,9 +64,11 @@ export default class Card {
     this._filmCardComponent.setWatchedClickHandler(this._hendleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
 
-    this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClick);
-    this._popupComponent.setWatchedClickHandler(this._hendleWatchedClick);
-    this._popupComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
+    //
+
+    this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisPopupClick);
+    this._popupComponent.setWatchedClickHandler(this._hendleWatchedPopupClick);
+    this._popupComponent.setFavoriteClickHandler(this._hendleFavoritePopupClick);
 
     if (this._prevFilmCardComponent === null || this._prevPopupComponent === null) {
       render(this._filmsListContainerView, this._filmCardComponent, RenderPosition.BEFOREEND);
@@ -162,6 +166,44 @@ export default class Card {
             {
               isFavorite: !this._film.isFavorite
             }
+        )
+    );
+  }
+
+  //
+
+  _hendleAddWatchlisPopupClick() {
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
+        Object.assign(
+            {},
+            this._film,
+            {isAddToWatchlist: !this._film.isAddToWatchlist}
+        )
+    );
+  }
+
+  _hendleWatchedPopupClick() {
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
+        Object.assign(
+            {},
+            this._film,
+            {isWatched: !this._film.isWatched}
+        )
+    );
+  }
+
+  _hendleFavoritePopupClick() {
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
+        Object.assign(
+            {},
+            this._film,
+            {isFavorite: !this._film.isFavorite}
         )
     );
   }

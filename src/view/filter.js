@@ -3,8 +3,6 @@ import AbstractView from "./abstract.js";
 const createFilterItemTemplate = (filter, currentFilterType) => {
   const {type, name, count} = filter;
 
-  console.log(currentFilterType)
-
   return (
     `<a href="#${type}" class="main-navigation__item ${type === currentFilterType ? `main-navigation__item--active` : ``}">${name}
       <span class="main-navigation__item-count">${count}</span>
@@ -12,7 +10,7 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
   );
 };
 
-export const cratesFilterTemplate = (filterItems, currentFilterType) => {
+export const createFilterTemplate = (filterItems, currentFilterType) => {
   const filterItemsTemplate = filterItems
     .map((filter) => createFilterItemTemplate(filter, currentFilterType))
     .join(``);
@@ -37,16 +35,22 @@ export default class Filter extends AbstractView {
   }
 
   getTemplate() {
-    return cratesFilterTemplate(this._filters, this._currentFilter);
+    return createFilterTemplate(this._filters, this._currentFilter);
   }
 
   _filterTypeChangeHandler(evt) {
+    if (evt.target.tagName !== `A`) {
+      return;
+    }
+
     evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.value);
+    const filterName = evt.target.textContent.split(`\n`, 1)[0];
+    const filterType = this._filters.filter((element) => element.name === filterName)[0].type;
+    this._callback.filterTypeChange(filterType);
   }
 
   setFilterTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
-    this.getElement().addEventListener(`change`, this._filterTypeChangeHandler);
+    this.getElement().addEventListener(`click`, this._filterTypeChangeHandler);
   }
 }

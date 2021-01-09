@@ -8,6 +8,7 @@ export default class Films extends Observer {
 
   setFilms(films) {
     this._films = films.slice();
+    // this._defaultOrder = this._films.forEach((film) => film.id);
   }
 
   getFilms() {
