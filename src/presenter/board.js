@@ -54,14 +54,12 @@ export default class FilmList {
     const films = this._filmsModel.getFilms();
     const filtredFilms = filter[filterType](films);
 
-    // this._filmsModel.getFilms()  .slice()
+    // this._filmsModel.getFilms().slice()
     switch (this._currentSortType) {
-      // case SortType.DEFAULT:
-      //   return filtredFilms
       case SortType.DATE:
-        return filtredFilms.sort(sortFilmDateUp);
+        return filtredFilms.slice().sort(sortFilmDateUp);
       case SortType.RATING:
-        return filtredFilms.sort(sortFilmRating);
+        return filtredFilms.slice().sort(sortFilmRating);
     }
 
     return filtredFilms;

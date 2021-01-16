@@ -6,7 +6,7 @@ import SmartView from "./smart.js";
 import {EMOJIS} from "../utils/const.js";
 
 const createCommentItemTemplate = (comment) => {
-  const {emoji, commentDate, author, message} = comment;
+  const {id, emoji, commentDate, author, message} = comment;
 
 
   // const date = commentDate !== null ? dayjs(commentDate).format(`MM/DD/YYYY h:mm`) : ``;
@@ -28,7 +28,7 @@ const createCommentItemTemplate = (comment) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${date}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-id="${id}">Delete</button>
         </p>
       </div>
     </li>`
@@ -183,16 +183,18 @@ const createsPopupTemplate = (film, commentItems) => {
 };
 
 export default class Popup extends SmartView {
-  constructor(film, comment) {
+  constructor(film, comments) {
     super();
     this._data = film;
-    this._comment = comment;
+    this._comments = comments;
 
     this._popupClickHandler = this._popupClickHandler.bind(this);
 
     this._addWatchlistClickHandler = this._addWatchlistClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
@@ -202,7 +204,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    return createsPopupTemplate(this._data, this._comment);
+    return createsPopupTemplate(this._data, this._comments);
   }
 
 
@@ -240,6 +242,17 @@ export default class Popup extends SmartView {
     this._callback.popupClick(this._film);
   }
 
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(evt.target.dataset.id);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((element) => {
+      element.addEventListener(`click`, this._deleteClickHandler);
+    });
+  }
 
   _addWatchlistClickHandler(evt) {
     evt.preventDefault();

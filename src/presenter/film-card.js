@@ -1,6 +1,7 @@
 import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup.js";
 import {generateComment} from "../mock/comments.js";
+import CommentsModel from "../model/comments.js";
 import {render, RenderPosition, replace, appendChild, removeChild, remove} from "../utils/render.js";
 import {UserAction, UpdateType} from "../utils/const.js";
 import {getRandomInteger} from "../utils/common.js";
@@ -38,13 +39,23 @@ export default class Card {
     this._hendleAddWatchlisPopupClick = this._hendleAddWatchlisPopupClick.bind(this);
     this._hendleWatchedPopupClick = this._hendleWatchedPopupClick.bind(this);
     this._hendleFavoritePopupClick = this._hendleFavoritePopupClick.bind(this);
+
+    const comments = new Array(getRandomInteger(COMMENT_COUNT_MIN, COMMENT_COUNT_MAX)).fill().map(generateComment);
+    this._commentsModel = new CommentsModel();
+    this._commentsModel.setComments(comments);
+
+    this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+
+    this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   init(film) {
     this._film = film;
 
-    const comments = new Array(getRandomInteger(COMMENT_COUNT_MIN, COMMENT_COUNT_MAX)).fill().map(generateComment);
-    this._comments = comments.slice();
+
+    this._comments = this._commentsModel.getComments();
+
 
     this._prevFilmCardComponent = this._filmCardComponent;
     this._prevPopupComponent = this._popupComponent;
@@ -59,6 +70,7 @@ export default class Card {
     this._filmCardComponent.setCommentsClickHandler(this._hendleCardClick);
     this._popupComponent.setCloseButtonClickHandler(this._hendlePopupClick);
 
+    this._popupComponent.setDeleteClickHandler(this._handleDeleteCommentClick); //
 
     this._filmCardComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClick);
     this._filmCardComponent.setWatchedClickHandler(this._hendleWatchedClick);
@@ -208,6 +220,31 @@ export default class Card {
     );
   }
 
+  // _handleAddCommentClick() {
+
+  // }
+
+  _handleDeleteCommentClick(commentId) {
+    const comments = this._commentsModel.getComments().filter((el) => String(el.id) === String(commentId))[0];
+    this._handleModelEvent(
+        UserAction.DELETE_COMMENT,
+        UpdateType.PATCH,
+        comments
+    );
+  }
+
+  _handleModelEvent(userAction, updateType, update) {
+    switch (userAction) {
+      case UserAction.ADD_COMMENT: {
+        this._popupComponent.addComment(updateType, update);
+        break;
+      }
+      case UserAction.DELETE_COMMENT: {
+        this._commentsModel.deleteComment(updateType, update);
+        break;
+      }
+    }
+  }
 
   _hendlePopupClick() {
     this._closePopup();
