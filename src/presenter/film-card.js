@@ -25,20 +25,20 @@ export default class Card {
     this._popupComponent = null;
     this._mode = Mode.CARD;
 
-    this._hendleCardClick = this._hendleCardClick.bind(this);
-    this._hendlePopupClick = this._hendlePopupClick.bind(this);
+    this._handleCardClick = this._handleCardClick.bind(this);
+    this._handlePopupClick = this._handlePopupClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
 
 
-    this._hendleAddWatchlisClick = this._hendleAddWatchlisClick.bind(this);
-    this._hendleWatchedClick = this._hendleWatchedClick.bind(this);
-    this._hendleFavoriteClick = this._hendleFavoriteClick.bind(this);
+    this._handleAddWatchlisClick = this._handleAddWatchlisClick.bind(this);
+    this._handleWatchedClick = this._handleWatchedClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
 
     //
 
-    this._hendleAddWatchlisPopupClick = this._hendleAddWatchlisPopupClick.bind(this);
-    this._hendleWatchedPopupClick = this._hendleWatchedPopupClick.bind(this);
-    this._hendleFavoritePopupClick = this._hendleFavoritePopupClick.bind(this);
+    this._handleAddWatchlisPopupClick = this._handleAddWatchlisPopupClick.bind(this);
+    this._handleWatchedPopupClick = this._handleWatchedPopupClick.bind(this);
+    this._handleFavoritePopupClick = this._handleFavoritePopupClick.bind(this);
 
     const comments = new Array(getRandomInteger(COMMENT_COUNT_MIN, COMMENT_COUNT_MAX)).fill().map(generateComment);
     this._commentsModel = new CommentsModel();
@@ -65,22 +65,22 @@ export default class Card {
     this._body = document.querySelector(`body`);
 
 
-    this._filmCardComponent.setPosterClickHandler(this._hendleCardClick);
-    this._filmCardComponent.setTitleClickHandler(this._hendleCardClick);
-    this._filmCardComponent.setCommentsClickHandler(this._hendleCardClick);
-    this._popupComponent.setCloseButtonClickHandler(this._hendlePopupClick);
+    this._filmCardComponent.setPosterClickHandler(this._handleCardClick);
+    this._filmCardComponent.setTitleClickHandler(this._handleCardClick);
+    this._filmCardComponent.setCommentsClickHandler(this._handleCardClick);
+    this._popupComponent.setCloseButtonClickHandler(this._handlePopupClick);
 
     this._popupComponent.setDeleteClickHandler(this._handleDeleteCommentClick); //
 
-    this._filmCardComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisClick);
-    this._filmCardComponent.setWatchedClickHandler(this._hendleWatchedClick);
-    this._filmCardComponent.setFavoriteClickHandler(this._hendleFavoriteClick);
+    this._filmCardComponent.setAddWatchlisClickHandler(this._handleAddWatchlisClick);
+    this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     //
 
-    this._popupComponent.setAddWatchlisClickHandler(this._hendleAddWatchlisPopupClick);
-    this._popupComponent.setWatchedClickHandler(this._hendleWatchedPopupClick);
-    this._popupComponent.setFavoriteClickHandler(this._hendleFavoritePopupClick);
+    this._popupComponent.setAddWatchlisClickHandler(this._handleAddWatchlisPopupClick);
+    this._popupComponent.setWatchedClickHandler(this._handleWatchedPopupClick);
+    this._popupComponent.setFavoriteClickHandler(this._handleFavoritePopupClick);
 
     if (this._prevFilmCardComponent === null || this._prevPopupComponent === null) {
       render(this._filmsListContainerView, this._filmCardComponent, RenderPosition.BEFOREEND);
@@ -134,13 +134,13 @@ export default class Card {
     }
   }
 
-  _hendleCardClick() {
+  _handleCardClick() {
     this._openPopup();
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
 
-  _hendleAddWatchlisClick() {
+  _handleAddWatchlisClick() {
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
@@ -154,7 +154,7 @@ export default class Card {
     );
   }
 
-  _hendleWatchedClick() {
+  _handleWatchedClick() {
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
@@ -168,7 +168,7 @@ export default class Card {
     );
   }
 
-  _hendleFavoriteClick() {
+  _handleFavoriteClick() {
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
@@ -184,7 +184,7 @@ export default class Card {
 
   //
 
-  _hendleAddWatchlisPopupClick() {
+  _handleAddWatchlisPopupClick() {
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.PATCH,
@@ -196,7 +196,7 @@ export default class Card {
     );
   }
 
-  _hendleWatchedPopupClick() {
+  _handleWatchedPopupClick() {
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.PATCH,
@@ -208,7 +208,7 @@ export default class Card {
     );
   }
 
-  _hendleFavoritePopupClick() {
+  _handleFavoritePopupClick() {
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.PATCH,
@@ -231,12 +231,17 @@ export default class Card {
         UpdateType.PATCH,
         comments
     );
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
+        this._film
+    );
   }
 
   _handleModelEvent(userAction, updateType, update) {
     switch (userAction) {
       case UserAction.ADD_COMMENT: {
-        this._popupComponent.addComment(updateType, update);
+        this._commentsModel.addComment(updateType, update);
         break;
       }
       case UserAction.DELETE_COMMENT: {
@@ -246,7 +251,7 @@ export default class Card {
     }
   }
 
-  _hendlePopupClick() {
+  _handlePopupClick() {
     this._closePopup();
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
