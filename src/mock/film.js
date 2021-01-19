@@ -207,7 +207,7 @@ export const generateFilm = () => {
     description: generateDescription(),
     comments: numberOfComments,
     addedEmoji: EMOJIS[0],
-    addedComment: `Select reaction below and write comment here`,
+    addedComment: ``,
     ageRating: generateAgeRating()
   };
 };

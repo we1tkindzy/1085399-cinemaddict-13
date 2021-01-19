@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import {EMOJIS} from "../utils/const.js";
 import {getRandomInteger} from "../utils/common.js";
 
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generateEmoji = () => {
   const randomIndex = getRandomInteger(0, EMOJIS.length - 1);
@@ -10,14 +10,14 @@ const generateEmoji = () => {
   return EMOJIS[randomIndex];
 };
 
-const generateDate = () => {
+export const generateDate = () => {
   const maxDaysGap = 7;
   const dayGap = getRandomInteger(-maxDaysGap, maxDaysGap);
 
   return dayjs().add(dayGap, `day`).toDate();
 };
 
-const generateAuthor = () => {
+export const generateAuthor = () => {
   const author = [
     `John Doe`,
     `Mark Conley`,

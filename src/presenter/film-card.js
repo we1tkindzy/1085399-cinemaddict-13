@@ -45,6 +45,7 @@ export default class Card {
     this._commentsModel.setComments(comments);
 
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+    this._handleAddCommentClick = this._handleAddCommentClick.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._commentsModel.addObserver(this._handleModelEvent);
@@ -70,7 +71,8 @@ export default class Card {
     this._filmCardComponent.setCommentsClickHandler(this._handleCardClick);
     this._popupComponent.setCloseButtonClickHandler(this._handlePopupClick);
 
-    this._popupComponent.setDeleteClickHandler(this._handleDeleteCommentClick); //
+    this._popupComponent.setDeleteClickHandler(this._handleDeleteCommentClick);
+    this._popupComponent.setAddCommentHandler(this._handleAddCommentClick);
 
     this._filmCardComponent.setAddWatchlisClickHandler(this._handleAddWatchlisClick);
     this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
@@ -220,9 +222,6 @@ export default class Card {
     );
   }
 
-  // _handleAddCommentClick() {
-
-  // }
 
   _handleDeleteCommentClick(commentId) {
     const comments = this._commentsModel.getComments().filter((el) => String(el.id) === String(commentId))[0];
@@ -230,6 +229,19 @@ export default class Card {
         UserAction.DELETE_COMMENT,
         UpdateType.PATCH,
         comments
+    );
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
+        this._film
+    );
+  }
+
+  _handleAddCommentClick(newComment) {
+    this._handleModelEvent(
+        UserAction.ADD_COMMENT,
+        UpdateType.PATCH,
+        newComment
     );
     this._changeData(
         UserAction.UPDATE_FILM,

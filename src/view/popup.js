@@ -4,6 +4,8 @@ dayjs.extend(relativeTime);
 import {getTimeFromMins} from "../utils/common.js";
 import SmartView from "./smart.js";
 import {EMOJIS} from "../utils/const.js";
+import {generateId, generateAuthor, generateDate} from "../mock/comments.js";
+
 
 const createCommentItemTemplate = (comment) => {
   const {id, emoji, commentDate, author, message} = comment;
@@ -169,7 +171,7 @@ const createsPopupTemplate = (film, commentItems) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="${addedComment}" name="comment"></textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${addedComment}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -195,6 +197,7 @@ export default class Popup extends SmartView {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
 
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
+    this._addCommentHandler = this._addCommentHandler.bind(this);
 
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
@@ -217,7 +220,6 @@ export default class Popup extends SmartView {
     this.getElement()
       .querySelector(`.film-details__emoji-list`)
       .addEventListener(`change`, this._emojiChangeHandler);
-
     this.getElement()
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`input`, this._descriptionInputHandler);
@@ -252,6 +254,28 @@ export default class Popup extends SmartView {
     this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((element) => {
       element.addEventListener(`click`, this._deleteClickHandler);
     });
+  }
+
+  _addCommentHandler(evt) {
+    const newComment = {
+      id: generateId(),
+      emoji: this._data.addedEmoji,
+      commentDate: generateDate(),
+      author: generateAuthor(),
+      message: this._data.addedComment
+    };
+
+    if (window.event.ctrlKey) {
+      if (window.event.ctrlKey && window.event.keyCode === 13) {
+        evt.preventDefault();
+        this._callback.addComment(newComment);
+      }
+    }
+  }
+
+  setAddCommentHandler(callback) {
+    this._callback.addComment = callback;
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._addCommentHandler);
   }
 
   _addWatchlistClickHandler(evt) {
