@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import he from "he";
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 import {getTimeFromMins} from "../utils/common.js";
@@ -26,7 +27,7 @@ const createCommentItemTemplate = (comment) => {
         <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">
       </span>
       <div>
-        <p class="film-details__comment-text">${message}</p>
+        <p class="film-details__comment-text">${he.encode(message)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${date}</span>
@@ -171,7 +172,7 @@ const createsPopupTemplate = (film, commentItems) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${addedComment}</textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(addedComment)}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -206,6 +207,12 @@ export default class Popup extends SmartView {
     this._setInnerHandlers();
   }
 
+  reset(film) {
+    this.updateData(
+        film
+    );
+  }
+
   getTemplate() {
     return createsPopupTemplate(this._data, this._comments);
   }
@@ -213,6 +220,7 @@ export default class Popup extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this.setAddCommentHandler(this._callback.addComment);
     this.setCloseButtonClickHandler(this._callback.popupClick);
   }
 
@@ -268,7 +276,9 @@ export default class Popup extends SmartView {
     if (window.event.ctrlKey) {
       if (window.event.ctrlKey && window.event.keyCode === 13) {
         evt.preventDefault();
-        this._callback.addComment(newComment);
+        if (newComment.message !== ``) {
+          this._callback.addComment(newComment);
+        }
       }
     }
   }

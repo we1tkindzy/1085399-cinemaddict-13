@@ -186,7 +186,7 @@ const generateDescription = () => {
 };
 
 export const generateFilm = () => {
-  const numberOfComments = (getRandomInteger(1, 5));
+  // const numberOfComments = (getRandomInteger(1, 5));
 
   return {
     id: generateId(),
@@ -205,7 +205,6 @@ export const generateFilm = () => {
     country: generateCountry(),
     genre: generateGenre(),
     description: generateDescription(),
-    comments: numberOfComments,
     addedEmoji: EMOJIS[0],
     addedComment: ``,
     ageRating: generateAgeRating()

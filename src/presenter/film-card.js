@@ -61,7 +61,7 @@ export default class Card {
     this._prevFilmCardComponent = this._filmCardComponent;
     this._prevPopupComponent = this._popupComponent;
 
-    this._filmCardComponent = new FilmCardView(film);
+    this._filmCardComponent = new FilmCardView(film, this._comments);
     this._popupComponent = new PopupView(film, this._comments);
     this._body = document.querySelector(`body`);
 
@@ -131,6 +131,7 @@ export default class Card {
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
+      this._popupComponent.reset(this._film);
       this._closePopup();
       document.removeEventListener(`keydown`, this._escKeyDownHandler);
     }
