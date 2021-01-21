@@ -1,12 +1,15 @@
 import dayjs from "dayjs";
+import he from "he";
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 import {getTimeFromMins} from "../utils/common.js";
 import SmartView from "./smart.js";
 import {EMOJIS} from "../utils/const.js";
+import {generateId, generateAuthor, generateDate} from "../mock/comments.js";
+
 
 const createCommentItemTemplate = (comment) => {
-  const {emoji, commentDate, author, message} = comment;
+  const {id, emoji, commentDate, author, message} = comment;
 
 
   // const date = commentDate !== null ? dayjs(commentDate).format(`MM/DD/YYYY h:mm`) : ``;
@@ -24,11 +27,11 @@ const createCommentItemTemplate = (comment) => {
         <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">
       </span>
       <div>
-        <p class="film-details__comment-text">${message}</p>
+        <p class="film-details__comment-text">${he.encode(message)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${date}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-id="${id}">Delete</button>
         </p>
       </div>
     </li>`
@@ -52,7 +55,7 @@ const createAddCommentEmojiTemplate = (addedEmoji) => {
 
 const createsPopupTemplate = (film, commentItems) => {
   const {poster, isAddToWatchlist, isWatched, isFavorite, name, originalName, producer, screenwriters, cast, rating, releaseDate,
-    viewingTime, country, genre, description, comments, addedEmoji, addedComment, ageRating} = film;
+    viewingTime, country, genre, description, addedEmoji, addedComment, ageRating} = film;
 
   const date = dayjs(releaseDate).format(`D MMMM YYYY`);
 
@@ -69,6 +72,8 @@ const createsPopupTemplate = (film, commentItems) => {
   const favoriteClassName = isFavorite
     ? `checked`
     : ``;
+
+  const commentsCount = commentItems.length;
 
   const commentItemsTemplate = commentItems
     .map((comment) => createCommentItemTemplate(comment))
@@ -155,7 +160,7 @@ const createsPopupTemplate = (film, commentItems) => {
 
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments}</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
           <ul class="film-details__comments-list">
             ${commentItemsTemplate}
@@ -167,7 +172,7 @@ const createsPopupTemplate = (film, commentItems) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="${addedComment}" name="comment"></textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(addedComment)}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -181,16 +186,19 @@ const createsPopupTemplate = (film, commentItems) => {
 };
 
 export default class Popup extends SmartView {
-  constructor(film, comment) {
+  constructor(film, comments) {
     super();
     this._data = film;
-    this._comment = comment;
+    this._comments = comments;
 
     this._popupClickHandler = this._popupClickHandler.bind(this);
 
     this._addWatchlistClickHandler = this._addWatchlistClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
+    this._addCommentHandler = this._addCommentHandler.bind(this);
 
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
@@ -199,13 +207,20 @@ export default class Popup extends SmartView {
     this._setInnerHandlers();
   }
 
+  reset(film) {
+    this.updateData(
+        film
+    );
+  }
+
   getTemplate() {
-    return createsPopupTemplate(this._data, this._comment);
+    return createsPopupTemplate(this._data, this._comments);
   }
 
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this.setAddCommentHandler(this._callback.addComment);
     this.setCloseButtonClickHandler(this._callback.popupClick);
   }
 
@@ -213,7 +228,6 @@ export default class Popup extends SmartView {
     this.getElement()
       .querySelector(`.film-details__emoji-list`)
       .addEventListener(`change`, this._emojiChangeHandler);
-
     this.getElement()
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`input`, this._descriptionInputHandler);
@@ -238,6 +252,41 @@ export default class Popup extends SmartView {
     this._callback.popupClick(this._film);
   }
 
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(evt.target.dataset.id);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((element) => {
+      element.addEventListener(`click`, this._deleteClickHandler);
+    });
+  }
+
+  _addCommentHandler(evt) {
+    const newComment = {
+      id: generateId(),
+      emoji: this._data.addedEmoji,
+      commentDate: generateDate(),
+      author: generateAuthor(),
+      message: this._data.addedComment
+    };
+
+    if (window.event.ctrlKey) {
+      if (window.event.ctrlKey && window.event.keyCode === 13) {
+        evt.preventDefault();
+        if (newComment.message !== ``) {
+          this._callback.addComment(newComment);
+        }
+      }
+    }
+  }
+
+  setAddCommentHandler(callback) {
+    this._callback.addComment = callback;
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._addCommentHandler);
+  }
 
   _addWatchlistClickHandler(evt) {
     evt.preventDefault();

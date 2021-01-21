@@ -2,8 +2,9 @@ import dayjs from "dayjs";
 import {getTimeFromMins} from "../utils/common.js";
 import AbstractView from "./abstract.js";
 
-const createsFilmCardTemplate = (film) => {
-  const {poster, isAddToWatchlist, isWatched, isFavorite, name, rating, releaseDate, viewingTime, genre, description, comments} = film;
+const createsFilmCardTemplate = (film, comments) => {
+  const {poster, isAddToWatchlist, isWatched, isFavorite, name, rating, releaseDate, viewingTime, genre, description} = film;
+  const commentsCount = comments.length;
 
   const date = dayjs(releaseDate).format(`YYYY`);
 
@@ -33,7 +34,7 @@ const createsFilmCardTemplate = (film) => {
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${description}</p>
-      <a class="film-card__comments">${comments} comments</a>
+      <a class="film-card__comments">${commentsCount} comments</a>
       <div class="film-card__controls">
         <button class="film-card__controls-item button ${watchlistClassName}" type="button">Add to watchlist</button>
         <button class="film-card__controls-item button ${watchedClassName}" type="button">Mark as watched</button>
@@ -44,9 +45,10 @@ const createsFilmCardTemplate = (film) => {
 };
 
 export default class FilmCard extends AbstractView {
-  constructor(film) {
+  constructor(film, comments) {
     super();
     this._film = film;
+    this._comments = comments;
 
     this._cardClickHandler = this._cardClickHandler.bind(this);
     this._addWatchlistClickHandler = this._addWatchlistClickHandler.bind(this);
@@ -55,7 +57,7 @@ export default class FilmCard extends AbstractView {
   }
 
   getTemplate() {
-    return createsFilmCardTemplate(this._film);
+    return createsFilmCardTemplate(this._film, this._comments);
   }
 
   _cardClickHandler(evt) {
