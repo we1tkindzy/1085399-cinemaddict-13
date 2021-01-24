@@ -40,13 +40,33 @@ export default class FilmList {
     this._handelModelChange = this._handelModelChange.bind(this);
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-
-    this._filmsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
+    this._filmsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderBoard();
+  }
+
+  destroy() {
+    this._clearBoard({resetRenderedFilmCount: true, resetSortType: true});
+
+    remove(this._filmsListComponent);
+    remove(this._listComponent);
+
+    this._filmsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  show() {
+    this._sortComponent.getElement().style.display = ``;
+    this._listComponent.getElement().style.display = ``;
+  }
+
+  hide() {
+    this._sortComponent.getElement().style.display = `none`;
+    this._listComponent.getElement().style.display = `none`;
   }
 
   _getFilms() {

@@ -172,16 +172,24 @@ export default class Card {
   }
 
   _handleFavoriteClick() {
+    const updatedMovie = Object.assign(
+        {},
+        this._film,
+        {isFavorite: !this._film.isFavorite}
+    );
+
+    if (updatedMovie.isWatched && updatedMovie.watchingDate === null) {
+      updatedMovie.watchingDate = new Date();
+    }
+
+    if (updatedMovie.watchingDate && !updatedMovie.isWatched) {
+      updatedMovie.watchingDate = null;
+    }
+
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
-        Object.assign(
-            {},
-            this._film,
-            {
-              isFavorite: !this._film.isFavorite
-            }
-        )
+        updatedMovie
     );
   }
 

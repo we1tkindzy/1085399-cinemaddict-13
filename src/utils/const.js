@@ -24,3 +24,8 @@ export const FilterType = {
   WATCHED: `watched`,
   FAVORITE: `favorite`
 };
+
+export const MenuItem = {
+  FILMS: `FILMS`,
+  STATS: `STATS`
+};

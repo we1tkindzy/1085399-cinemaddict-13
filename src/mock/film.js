@@ -185,14 +185,24 @@ const generateDescription = () => {
   return descriptionsList.join(``);
 };
 
+const generateWatchDate = () => {
+  const now = new Date();
+  const dateFrom = new Date(now.setMonth(now.getMonth() - 2)).getTime();
+  const dateTo = new Date().getTime();
+
+  return new Date(getRandomInteger(dateFrom, dateTo));
+};
+
 export const generateFilm = () => {
-  // const numberOfComments = (getRandomInteger(1, 5));
+  const isWatched = Boolean(getRandomInteger());
 
   return {
     id: generateId(),
     poster: generatePoster(),
     isAddToWatchlist: Boolean(getRandomInteger()),
-    isWatched: Boolean(getRandomInteger()),
+    // isWatched: Boolean(getRandomInteger()),
+    isWatched,
+    watchingDate: isWatched ? generateWatchDate() : null,
     isFavorite: Boolean(getRandomInteger()),
     name: generateName(),
     rating: getRandomInteger(0, 100) / 10,
