@@ -40,4 +40,12 @@ export default class Smart extends Abstract {
   restoreHandlers() {
     throw new Error(`Abstract method not implemented: resetHandlers`);
   }
+
+  hide() {
+    this.getElement().style.display = `none`;
+  }
+
+  show() {
+    this.getElement().style.display = ``;
+  }
 }
