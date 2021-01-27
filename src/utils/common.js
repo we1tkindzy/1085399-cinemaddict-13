@@ -24,3 +24,5 @@ export const getTimeFromMins = (mins) => {
   const minutes = mins % 60;
   return hours + minutes + `m`;
 };
+
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
