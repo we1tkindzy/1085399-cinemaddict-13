@@ -39,16 +39,41 @@ export default class Comments extends Observer {
     this._notify(updateType);
   }
 
-  // updateComments(actionType, updateType, update) {
-  //   switch (actionType) {
-  //     case UserAction.ADD_COMMENT:
-  //       this._filmsModel.addComment(updateType, update);
-  //       break;
-  //     case UserAction.DELETE_COMMENT:
-  //       this._filmsModel.deleteComment(updateType, update);
-  //       break;
-  //   }
+  static adaptToClient(comment) {
+    const adaptedComment = Object.assign(
+        {},
+        comment,
+        {
+          message: comment.comment,
+          emoji: comment.emotion,
+          commentDate: new Date(comment.date)
+        }
+    );
 
-  //   this._notify();
-  // }
+
+    delete adaptedComment.comment;
+    delete adaptedComment.emotion;
+    delete adaptedComment.date;
+
+    return adaptedComment;
+  }
+
+  static adaptToServer(comment) {
+    const adaptedComment = Object.assign(
+        {},
+        comment,
+        {
+          comment: comment.message,
+          emotion: comment.emoji,
+          date: comment.commentDate.toISOString()
+        }
+    );
+
+
+    delete adaptedComment.message;
+    delete adaptedComment.emoji;
+    delete adaptedComment.commentDate;
+
+    return adaptedComment;
+  }
 }

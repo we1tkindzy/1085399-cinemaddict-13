@@ -2,40 +2,38 @@ import ProfileView from "./view/profile.js";
 import MenuView from "./view/menu.js";
 import StatisticsView from "./view/stats.js";
 import FilmsAmountView from "./view/films-amount.js";
-import {generateFilm} from "./mock/film.js";
 import BoardPresenter from "./presenter/board.js";
 import FilterPresenter from "./presenter/filter.js";
 import FilmsModel from "./model/films.js";
 import FilterModel from "./model/filter.js";
 import {render, RenderPosition, replace} from "./utils/render.js";
-import {MenuItem} from "./utils/const.js";
+import {MenuItem, UpdateType} from "./utils/const.js";
+import Api from "./api.js";
 
 
-const FILM_COUNT = 10;
-
-const films = new Array(FILM_COUNT).fill().map(generateFilm);
-
-
-const filmsModel = new FilmsModel();
-filmsModel.setFilms(films);
-
-const filterModel = new FilterModel();
+const AUTHORIZATION = `Basic sfffertehhg27j3`;
+const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
 
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
 const siteFooterElement = document.querySelector(`.footer__statistics`);
 
 
+const api = new Api(END_POINT, AUTHORIZATION);
+
+const filmsModel = new FilmsModel();
+
+const filterModel = new FilterModel();
+
 render(siteHeaderElement, new ProfileView(), RenderPosition.BEFOREEND);
 
 const menuComponent = new MenuView();
-render(siteMainElement, menuComponent, RenderPosition.BEFOREEND);
 
 
 let statisticsComponent = null;
 
 
-const boardPresenter = new BoardPresenter(siteMainElement, siteFooterElement, filmsModel, filterModel);
+const boardPresenter = new BoardPresenter(siteMainElement, siteFooterElement, filmsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(menuComponent, filterModel, filmsModel);
 
 
@@ -64,12 +62,21 @@ const handleSiteMenuClick = (menuItem) => {
   filterPresenter.resetActiveFilter();
 };
 
-menuComponent.setMenuClickHandler(handleSiteMenuClick);
-
 
 filterPresenter.init();
 boardPresenter.init();
 
+api.getFilms()
+  .then((films) => {
+    filmsModel.setFilms(UpdateType.INIT, films);
+    render(siteMainElement, menuComponent, RenderPosition.AFTERBEGIN);
+    menuComponent.setMenuClickHandler(handleSiteMenuClick);
+  })
+  .catch(() => {
+    filmsModel.setFilms(UpdateType.INIT, []);
+    render(siteMainElement, menuComponent, RenderPosition.AFTERBEGIN);
+    menuComponent.setMenuClickHandler(handleSiteMenuClick);
+  });
 
 const countOfFilms = filmsModel._films.length;
 render(siteFooterElement, new FilmsAmountView(countOfFilms), RenderPosition.BEFOREEND);

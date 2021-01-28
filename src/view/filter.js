@@ -4,9 +4,11 @@ import {MenuItem} from "../utils/const.js";
 const createFilterItemTemplate = (filter, currentFilterType) => {
   const {type, name, count} = filter;
 
+  const countType = type === `all` ? `` : `<span class="main-navigation__item-count">${count}</span>`;
+
   return (
     `<a href="#${type}" class="main-navigation__item ${type === currentFilterType ? `main-navigation__item--active` : ``}" date-type="${MenuItem.FILMS}">${name}
-      <span class="main-navigation__item-count">${count}</span>
+      ${countType}
     </a>`
   );
 };

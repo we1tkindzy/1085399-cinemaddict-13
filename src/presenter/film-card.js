@@ -1,13 +1,9 @@
 import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup.js";
-import {generateComment} from "../mock/comments.js";
 import CommentsModel from "../model/comments.js";
 import {render, RenderPosition, replace, appendChild, removeChild, remove} from "../utils/render.js";
 import {UserAction, UpdateType} from "../utils/const.js";
-import {getRandomInteger} from "../utils/common.js";
 
-const COMMENT_COUNT_MAX = 5;
-const COMMENT_COUNT_MIN = 1;
 
 const Mode = {
   CARD: `CARD`,
@@ -15,11 +11,12 @@ const Mode = {
 };
 
 export default class Card {
-  constructor(filmsListContainerView, siteFooterElement, changeData, changeMode) {
+  constructor(filmsListContainerView, siteFooterElement, changeData, changeMode, api) {
     this._filmsListContainerView = filmsListContainerView;
     this._siteFooterElement = siteFooterElement;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._api = api;
 
     this._filmCardComponent = null;
     this._popupComponent = null;
@@ -40,9 +37,7 @@ export default class Card {
     this._handleWatchedPopupClick = this._handleWatchedPopupClick.bind(this);
     this._handleFavoritePopupClick = this._handleFavoritePopupClick.bind(this);
 
-    const comments = new Array(getRandomInteger(COMMENT_COUNT_MIN, COMMENT_COUNT_MAX)).fill().map(generateComment);
     this._commentsModel = new CommentsModel();
-    this._commentsModel.setComments(comments);
 
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
     this._handleAddCommentClick = this._handleAddCommentClick.bind(this);
@@ -55,14 +50,11 @@ export default class Card {
     this._film = film;
 
 
-    this._comments = this._commentsModel.getComments();
-
-
     this._prevFilmCardComponent = this._filmCardComponent;
     this._prevPopupComponent = this._popupComponent;
 
-    this._filmCardComponent = new FilmCardView(film, this._comments);
-    this._popupComponent = new PopupView(film, this._comments);
+    this._filmCardComponent = new FilmCardView(film);
+    this._popupComponent = new PopupView(film, this._commentsModel.getComments());
     this._body = document.querySelector(`body`);
 
 
@@ -140,6 +132,10 @@ export default class Card {
   _handleCardClick() {
     this._openPopup();
     document.addEventListener(`keydown`, this._escKeyDownHandler);
+    this._api.getComments(this._film.id)
+      .then((comments) => this._commentsModel.setComments(comments))
+      .then(() => this.init(this._film))
+      .catch(() => this._commentsModel.setComments([]));
   }
 
 
