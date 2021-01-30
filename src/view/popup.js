@@ -2,14 +2,16 @@ import dayjs from "dayjs";
 import he from "he";
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
-import {getTimeFromMins, generateId} from "../utils/common.js";
+import {getTimeFromMins} from "../utils/common.js";
 import SmartView from "./smart.js";
 import {EMOJIS} from "../utils/const.js";
+import {setAborting} from "../presenter/film-card.js";
 
 
-const createCommentItemTemplate = (comment) => {
+const createCommentItemTemplate = (comment, isDisabled = false, deletingComment) => {
   const {id, emoji, commentDate, author, message} = comment;
 
+  const isDeleting = (Number(id) === Number(deletingComment)) ? true : false;
 
   // const date = commentDate !== null ? dayjs(commentDate).format(`MM/DD/YYYY h:mm`) : ``;
 
@@ -26,11 +28,11 @@ const createCommentItemTemplate = (comment) => {
         <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">
       </span>
       <div>
-        <p class="film-details__comment-text">${message}</p>
+        <p class="film-details__comment-text">${he.encode(message)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${date}</span>
-          <button class="film-details__comment-delete" data-id="${id}">Delete</button>
+          <button class="film-details__comment-delete" data-id="${id} ${isDisabled ? `disabled` : ``}">${isDeleting ? `Deleting...` : `Delete`}</button>
         </p>
       </div>
     </li>`
@@ -38,13 +40,13 @@ const createCommentItemTemplate = (comment) => {
 };
 
 
-const createAddCommentEmojiTemplate = (addedEmoji) => {
+const createAddCommentEmojiTemplate = (addedEmoji, isDisabled) => {
   return EMOJIS.map(function (emoji) {
     const addedEmojiClassName = addedEmoji === emoji
       ? `checked`
       : ``;
 
-    return `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${addedEmojiClassName}>
+    return `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${addedEmojiClassName} ${isDisabled ? `disabled` : ``}>
     <label class="film-details__emoji-label" for="emoji-${emoji}">
       <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
     </label>`;
@@ -52,12 +54,7 @@ const createAddCommentEmojiTemplate = (addedEmoji) => {
 };
 
 
-const NEW_COMMENT = {
-  addedEmoji: ``,
-  addedComment: ``
-};
-
-const createsPopupTemplate = (film, commentItems, localComment) => {
+const createsPopupTemplate = (film, commentItems, localData) => {
   const {poster, isAddToWatchlist, isWatched, isFavorite, name, originalName, producer, screenwriters, cast, rating, releaseDate,
     viewingTime, country, genre, description, ageRating} = film;
 
@@ -81,22 +78,19 @@ const createsPopupTemplate = (film, commentItems, localComment) => {
 
   const commentsCount = commentItems.length;
 
+  const {localCommentEmoji: emoji, localCommentText: commentText, isDisabled, deletingCommentId} = localData;
+
   const commentItemsTemplate = commentItems
-    .map((comment) => createCommentItemTemplate(comment))
+    .map((comment) => createCommentItemTemplate(comment, isDisabled, deletingCommentId))
     .join(``);
 
-  // const newComment = {
-  //   addedEmoji: ``,
-  //   addedComment: ``
-  // }
 
-  const emoji = localComment.addedEmoji;
-  const commentText = localComment.addComment;
-
-  const emojisFormTemplate = createAddCommentEmojiTemplate(emoji);
+  const emojisFormTemplate = createAddCommentEmojiTemplate(emoji, isDisabled);
   const emotionTemplate = emoji
     ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}">`
     : ``;
+
+  const disablingTemplate = isDisabled ? `disabled` : ``;
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -164,13 +158,13 @@ const createsPopupTemplate = (film, commentItems, localComment) => {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${watchlistClassName}>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${watchlistClassName} ${disablingTemplate}>
           <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${watchedClassName}>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${watchedClassName} ${disablingTemplate}>
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${favoriteClassName}>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${favoriteClassName} ${disablingTemplate}>
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
       </div>
@@ -189,7 +183,7 @@ const createsPopupTemplate = (film, commentItems, localComment) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"  ${disablingTemplate}>${he.encode(commentText)}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -205,9 +199,15 @@ const createsPopupTemplate = (film, commentItems, localComment) => {
 export default class Popup extends SmartView {
   constructor(film, comments) {
     super();
-    this._data = film;
+    this._film = film;
     this._comments = comments;
-    this._localData = NEW_COMMENT;
+    this._data = {
+      localCommentEmoji: ``,
+      commentDate: new Date(),
+      localCommentText: ``,
+      isDisabled: false,
+      deletingCommentId: null
+    };
 
     this._popupCloseClickHandler = this._popupCloseClickHandler.bind(this);
 
@@ -232,7 +232,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    return createsPopupTemplate(this._data, this._comments, this._localData);
+    return createsPopupTemplate(this._film, this._comments, this._data);
   }
 
 
@@ -280,6 +280,7 @@ export default class Popup extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this.setAddCommentHandler(this._callback.addComment);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this.setCloseButtonClickHandler(this._callback.popupClick);
   }
 
@@ -294,17 +295,19 @@ export default class Popup extends SmartView {
 
   _descriptionInputHandler(evt) {
     evt.preventDefault();
-    this.updateData({
-      commentText: evt.target.value
-    }, true);
+    this._data.message = evt.target.value;
+    this.updateData({localCommentText: evt.target.value}, true);
   }
 
   _emojiChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({
-      emoji: evt.target.value
-    });
 
+    if (this._data.isDisabled) {
+      return;
+    }
+
+    this._data.emoji = evt.target.value;
+    this.updateData({localCommentEmoji: evt.target.value});
     this.moveScrollDown();
   }
 
@@ -326,19 +329,13 @@ export default class Popup extends SmartView {
   }
 
   _addCommentHandler(evt) {
-    const newComment = {
-      id: generateId(),
-      emoji: this._localData.addedEmoji,
-      commentDate: new Date(),
-      author: `qwe`,
-      message: this._localData.addedComment
-    };
-
     if (window.event.ctrlKey) {
       if (window.event.ctrlKey && window.event.keyCode === 13) {
-        evt.preventDefault();
-        if (newComment.message !== ``) {
-          this._callback.addComment(newComment);
+        if (this._data.message !== `` && this._data.emoji !== ``) {
+          evt.preventDefault();
+          this._callback.addComment(this._data);
+        } else {
+          setAborting();
         }
       }
     }

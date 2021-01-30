@@ -229,11 +229,11 @@ export default class Card {
 
 
   _handleDeleteCommentClick(commentId) {
-    const comments = this._commentsModel.getComments().filter((el) => String(el.id) === String(commentId))[0];
+    this._popupComponent.updateData({isDisabled: true, deletingCommentId: commentId});
     this._handleModelEvent(
         UserAction.DELETE_COMMENT,
         UpdateType.PATCH,
-        comments
+        commentId
     );
     this._changeData(
         UserAction.UPDATE_FILM,
@@ -243,6 +243,7 @@ export default class Card {
   }
 
   _handleAddCommentClick(newComment) {
+    this._popupComponent.updateData({isDisabled: true});
     this._handleModelEvent(
         UserAction.ADD_COMMENT,
         UpdateType.PATCH,
@@ -255,14 +256,35 @@ export default class Card {
     );
   }
 
+  setAborting() {
+    const resetPopupState = () => {
+      this._popupComponent.updateData({isDisabled: false, deletingCommentId: null});
+      this._popupComponent.moveScrollDown();
+    };
+
+    this._popupComponent.shake(resetPopupState);
+  }
+
   _handleModelEvent(userAction, updateType, update) {
     switch (userAction) {
       case UserAction.ADD_COMMENT: {
-        this._commentsModel.addComment(updateType, update);
+        this._api.addComment(this._film.id, update).then((response) => {
+          this._commentsModel.addComment(updateType, response);
+          this._popupComponent.moveScrollDown();
+        })
+        .catch(() => {
+          this.setAborting();
+        });
         break;
       }
       case UserAction.DELETE_COMMENT: {
-        this._commentsModel.deleteComment(updateType, update);
+        this._api.deleteComment(update).then(() => {
+          this._commentsModel.deleteComment(updateType, update);
+          this._popupComponent.moveScrollDown();
+        })
+        .catch(() => {
+          this.setAborting();
+        });
         break;
       }
     }
