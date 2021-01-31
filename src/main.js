@@ -1,9 +1,9 @@
-import ProfileView from "./view/profile.js";
 import MenuView from "./view/menu.js";
 import StatisticsView from "./view/stats.js";
 import FilmsAmountView from "./view/films-amount.js";
 import BoardPresenter from "./presenter/board.js";
 import FilterPresenter from "./presenter/filter.js";
+import UserRankPresenter from "./presenter/user-rank.js";
 import FilmsModel from "./model/films.js";
 import FilterModel from "./model/filter.js";
 import {render, RenderPosition, replace} from "./utils/render.js";
@@ -25,7 +25,8 @@ const filmsModel = new FilmsModel();
 
 const filterModel = new FilterModel();
 
-render(siteHeaderElement, new ProfileView(), RenderPosition.BEFOREEND);
+const userRankPresenterPresenter = new UserRankPresenter(siteHeaderElement, filmsModel);
+userRankPresenterPresenter.init();
 
 const menuComponent = new MenuView();
 
@@ -46,7 +47,8 @@ const handleSiteMenuClick = (menuItem) => {
 
   let prevStatisticsComponent = statisticsComponent;
   const watchedFilms = filmsModel.getFilms().filter((film) => film.isWatched === true);
-  statisticsComponent = new StatisticsView(watchedFilms);
+  const currentUserRank = userRankPresenterPresenter.getCurrentUserRank();
+  statisticsComponent = new StatisticsView(watchedFilms, currentUserRank);
 
   if (prevStatisticsComponent === null) {
     boardPresenter.hide();
@@ -70,13 +72,12 @@ api.getFilms()
   .then((films) => {
     filmsModel.setFilms(UpdateType.INIT, films);
     render(siteMainElement, menuComponent, RenderPosition.AFTERBEGIN);
+    render(siteFooterElement, new FilmsAmountView(filmsModel._films.length), RenderPosition.BEFOREEND);
     menuComponent.setMenuClickHandler(handleSiteMenuClick);
   })
   .catch(() => {
     filmsModel.setFilms(UpdateType.INIT, []);
     render(siteMainElement, menuComponent, RenderPosition.AFTERBEGIN);
+    render(siteFooterElement, new FilmsAmountView(filmsModel._films.length), RenderPosition.BEFOREEND);
     menuComponent.setMenuClickHandler(handleSiteMenuClick);
   });
-
-const countOfFilms = filmsModel._films.length;
-render(siteFooterElement, new FilmsAmountView(countOfFilms), RenderPosition.BEFOREEND);

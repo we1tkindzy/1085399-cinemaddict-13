@@ -116,6 +116,7 @@ export default class Card {
 
   _closePopup() {
     removeChild(this._siteFooterElement, this._popupComponent);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
     this._body.classList.remove(`hide-overflow`);
     this._mode = Mode.CARD;
   }
@@ -154,24 +155,10 @@ export default class Card {
   }
 
   _handleWatchedClick() {
-    this._changeData(
-        UserAction.UPDATE_FILM,
-        UpdateType.MINOR,
-        Object.assign(
-            {},
-            this._film,
-            {
-              isWatched: !this._film.isWatched
-            }
-        )
-    );
-  }
-
-  _handleFavoriteClick() {
     const updatedMovie = Object.assign(
         {},
         this._film,
-        {isFavorite: !this._film.isFavorite}
+        {isWatched: !this._film.isWatched}
     );
 
     if (updatedMovie.isWatched && updatedMovie.watchingDate === null) {
@@ -186,6 +173,20 @@ export default class Card {
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
         updatedMovie
+    );
+  }
+
+  _handleFavoriteClick() {
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        Object.assign(
+            {},
+            this._film,
+            {
+              isFavorite: !this._film.isFavorite
+            }
+        )
     );
   }
 
@@ -270,7 +271,7 @@ export default class Card {
       case UserAction.ADD_COMMENT: {
         this._api.addComment(this._film.id, update).then((response) => {
           this._commentsModel.addComment(updateType, response);
-          this._popupComponent.moveScrollDown();
+          // this._popupComponent.moveScrollDown();
         })
         .catch(() => {
           this.setAborting();
@@ -280,7 +281,7 @@ export default class Card {
       case UserAction.DELETE_COMMENT: {
         this._api.deleteComment(update).then(() => {
           this._commentsModel.deleteComment(updateType, update);
-          this._popupComponent.moveScrollDown();
+          // this._popupComponent.moveScrollDown();
         })
         .catch(() => {
           this.setAborting();
@@ -292,6 +293,5 @@ export default class Card {
 
   _handlePopupClick() {
     this._closePopup();
-    document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 }

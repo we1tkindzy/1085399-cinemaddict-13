@@ -4,7 +4,6 @@ import ListEmptyView from "../view/list-empty.js";
 import LoadingView from "../view/loading.js";
 import FilmsListView from "../view/films-list.js";
 import FilmsListContainerView from "../view/film-list-container.js";
-// import FilmCardView from "../view/film-card.js";
 import LoadMoreButtonView from "../view/load-more-button.js";
 import FilmPresenter from "./film-card.js";
 import {sortFilmDateUp, sortFilmRating} from "../utils/common.js";
@@ -79,7 +78,7 @@ export default class FilmList {
     const films = this._filmsModel.getFilms();
     const filtredFilms = filter[filterType](films);
 
-    // this._filmsModel.getFilms().slice()
+
     switch (this._currentSortType) {
       case SortType.DATE:
         return filtredFilms.slice().sort(sortFilmDateUp);
@@ -167,7 +166,7 @@ export default class FilmList {
   }
 
   _renderLoading() {
-    render(this._listComponent, this._loadingComponent, RenderPosition.AFTERBEGIN);
+    render(this._siteMainElement, this._loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderListEmpty() {

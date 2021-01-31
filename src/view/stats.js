@@ -36,7 +36,7 @@ const filter = {
 
 const renderGenresChart = (statisticCtx, films) => {
   if (films.length === 0) {
-    return;
+    return false;
   }
 
   const BAR_HEIGHT = 50;
@@ -114,17 +114,18 @@ const renderGenresChart = (statisticCtx, films) => {
 
 
 const createsStatsTemplate = (localData) => {
-  const {films, currentFilter} = localData;
+  const {films, currentFilter, userRank} = localData;
   const countWatchedFilms = getWatchedFilms(films);
   const {hours, minutes} = getTotalDuration(films);
   const topGenre = getTopGenre(films);
 
+  const userRankTemplate = userRank || ``;
 
   return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">Sci-Fighter</span>
+      <span class="statistic__rank-label">${userRankTemplate}</span>
     </p>
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -170,10 +171,11 @@ const createsStatsTemplate = (localData) => {
 
 
 export default class UsersRank extends SmartView {
-  constructor(films) {
+  constructor(films, userRank) {
     super();
 
     this._allFilms = films;
+    this._data.userRank = userRank;
     this._data.films = films;
     this._genresChart = null;
 
