@@ -8,6 +8,10 @@ const UserRank = {
   MOVIE_BUFF: `Movie Buff`
 };
 
+const NOVICE_AMOUNT = 0;
+const FAN_AMOUNT = 10;
+const MOVIE_BUFF_AMOUNT = 20;
+
 export default class UsersRank {
   constructor(userRankContainer, filmsModel) {
     this._userRankContainer = userRankContainer;
@@ -37,6 +41,10 @@ export default class UsersRank {
     remove(prevUserRankComponent);
   }
 
+  getCurrentUserRank() {
+    return this._currentUserRank;
+  }
+
   _handleModelEvent() {
     if (this._currentUserRank === this._getUserRank()) {
       return;
@@ -48,22 +56,18 @@ export default class UsersRank {
   _getUserRank() {
     const watchedFilmsCount = this._filmsModel.getFilms().filter((movie) => movie.isWatched).length;
 
-    if (watchedFilmsCount > 20) {
+    if (watchedFilmsCount > MOVIE_BUFF_AMOUNT) {
       return UserRank.MOVIE_BUFF;
     }
 
-    if (watchedFilmsCount > 10) {
+    if (watchedFilmsCount > FAN_AMOUNT) {
       return UserRank.FAN;
     }
 
-    if (watchedFilmsCount > 0) {
+    if (watchedFilmsCount > NOVICE_AMOUNT) {
       return UserRank.NOVICE;
     }
 
     return null;
-  }
-
-  getCurrentUserRank() {
-    return this._currentUserRank;
   }
 }

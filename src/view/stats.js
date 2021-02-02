@@ -42,14 +42,14 @@ const renderGenresChart = (statisticCtx, films) => {
   const BAR_HEIGHT = 50;
 
   const labels = [];
-  const counts = [];
+  const amounts = [];
 
   Object
     .entries(getGenresStats(films))
     .sort((a, b) => b[1] - a[1])
-    .forEach(([label, count]) => {
+    .forEach(([label, amount]) => {
       labels.push(label);
-      counts.push(count);
+      amounts.push(amount);
     });
 
   statisticCtx.height = BAR_HEIGHT * Object.values(labels).length;
@@ -60,7 +60,7 @@ const renderGenresChart = (statisticCtx, films) => {
     data: {
       labels,
       datasets: [{
-        data: counts,
+        data: amounts,
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -113,9 +113,9 @@ const renderGenresChart = (statisticCtx, films) => {
 };
 
 
-const createsStatsTemplate = (localData) => {
+const createStatsTemplate = (localData) => {
   const {films, currentFilter, userRank} = localData;
-  const countWatchedFilms = getWatchedFilms(films);
+  const amountWatchedFilms = getWatchedFilms(films);
   const {hours, minutes} = getTotalDuration(films);
   const topGenre = getTopGenre(films);
 
@@ -150,7 +150,7 @@ const createsStatsTemplate = (localData) => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${countWatchedFilms} <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${amountWatchedFilms} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
@@ -170,7 +170,7 @@ const createsStatsTemplate = (localData) => {
 };
 
 
-export default class UsersRank extends SmartView {
+export default class Stats extends SmartView {
   constructor(films, userRank) {
     super();
 
@@ -188,7 +188,12 @@ export default class UsersRank extends SmartView {
   }
 
   getTemplate() {
-    return createsStatsTemplate(this._data);
+    return createStatsTemplate(this._data);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandler();
+    this._setChart();
   }
 
   _filterChangeHandler(evt) {
@@ -210,11 +215,6 @@ export default class UsersRank extends SmartView {
     this.getElement()
       .querySelector(`.statistic__filters`)
       .addEventListener(`change`, this._filterChangeHandler);
-  }
-
-  restoreHandlers() {
-    this._setInnerHandler();
-    this._setChart();
   }
 
   _setChart() {

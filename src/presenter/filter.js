@@ -41,6 +41,10 @@ export default class Filter {
     remove(prevFilterComponent);
   }
 
+  resetActiveFilter() {
+    this.init(true);
+  }
+
   _handleModelEvent() {
     this.init();
   }
@@ -78,9 +82,5 @@ export default class Filter {
         count: filter[FilterType.FAVORITE](films).length
       }
     ];
-  }
-
-  resetActiveFilter() {
-    this.init(true);
   }
 }

@@ -13,8 +13,6 @@ const createCommentItemTemplate = (comment, isDisabled = false, deletingComment)
 
   const isDeleting = (Number(id) === Number(deletingComment)) ? true : false;
 
-  // const date = commentDate !== null ? dayjs(commentDate).format(`MM/DD/YYYY h:mm`) : ``;
-
   let date = dayjs(commentDate).fromNow(true) + ` ago`;
 
   if (date === `a day ago` || date === `a few seconds ago`) {
@@ -54,7 +52,7 @@ const createAddCommentEmojiTemplate = (addedEmoji, isDisabled) => {
 };
 
 
-const createsPopupTemplate = (film, commentItems, localData) => {
+const createPopupTemplate = (film, commentItems, localData) => {
   const {poster, isAddToWatchlist, isWatched, isFavorite, name, originalName, producer, screenwriters, cast, rating, releaseDate,
     viewingTime, country, genre, description, ageRating} = film;
 
@@ -232,7 +230,18 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    return createsPopupTemplate(this._film, this._comments, this._data);
+    return createPopupTemplate(this._film, this._comments, this._data);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setAddCommentHandler(this._callback.addComment);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+    this.setCloseButtonClickHandler(this._callback.popupClick);
+  }
+
+  moveScrollDown() {
+    this.getElement().scrollTop = this.getElement().scrollHeight;
   }
 
 
@@ -277,13 +286,6 @@ export default class Popup extends SmartView {
   }
 
 
-  restoreHandlers() {
-    this._setInnerHandlers();
-    this.setAddCommentHandler(this._callback.addComment);
-    this.setDeleteClickHandler(this._callback.deleteClick);
-    this.setCloseButtonClickHandler(this._callback.popupClick);
-  }
-
   _setInnerHandlers() {
     this.getElement()
       .querySelector(`.film-details__emoji-list`)
@@ -311,10 +313,6 @@ export default class Popup extends SmartView {
     this.moveScrollDown();
   }
 
-  moveScrollDown() {
-    this.getElement().scrollTop = this.getElement().scrollHeight;
-  }
-
 
   _deleteClickHandler(evt) {
     evt.preventDefault();
@@ -329,8 +327,8 @@ export default class Popup extends SmartView {
   }
 
   _addCommentHandler(evt) {
-    if (window.event.ctrlKey) {
-      if (window.event.ctrlKey && window.event.keyCode === 13) {
+    if (evt.ctrlKey || evt.metaKey) {
+      if ((evt.ctrlKey && evt.keyCode === 13) || (evt.metaKey && evt.keyCode === 13)) {
         if (this._data.message !== `` && this._data.emoji !== ``) {
           evt.preventDefault();
           this._callback.addComment(this._data);

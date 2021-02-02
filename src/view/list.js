@@ -1,6 +1,6 @@
 import AbstractView from "./abstract.js";
 
-const createsListTemplate = () => {
+const createListTemplate = () => {
   return `<section class="films">
 
 
@@ -9,6 +9,6 @@ const createsListTemplate = () => {
 
 export default class List extends AbstractView {
   getTemplate() {
-    return createsListTemplate();
+    return createListTemplate();
   }
 }

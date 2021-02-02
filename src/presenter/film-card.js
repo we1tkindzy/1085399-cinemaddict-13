@@ -10,7 +10,7 @@ const Mode = {
   POPUP: `POPUP`
 };
 
-export default class Card {
+export default class FilmCard {
   constructor(filmsListContainerView, siteFooterElement, changeData, changeMode, api) {
     this._filmsListContainerView = filmsListContainerView;
     this._siteFooterElement = siteFooterElement;
@@ -31,7 +31,6 @@ export default class Card {
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
 
-    //
 
     this._handleAddWatchlisPopupClick = this._handleAddWatchlisPopupClick.bind(this);
     this._handleWatchedPopupClick = this._handleWatchedPopupClick.bind(this);
@@ -70,7 +69,6 @@ export default class Card {
     this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
-    //
 
     this._popupComponent.setAddWatchlisClickHandler(this._handleAddWatchlisPopupClick);
     this._popupComponent.setWatchedClickHandler(this._handleWatchedPopupClick);
@@ -103,6 +101,15 @@ export default class Card {
     if (this._mode !== Mode.CARD) {
       this._closePopup();
     }
+  }
+
+  setAborting() {
+    const resetPopupState = () => {
+      this._popupComponent.updateData({isDisabled: false, deletingCommentId: null});
+      this._popupComponent.moveScrollDown();
+    };
+
+    this._popupComponent.shake(resetPopupState);
   }
 
 
@@ -190,7 +197,6 @@ export default class Card {
     );
   }
 
-  //
 
   _handleAddWatchlisPopupClick() {
     this._changeData(
@@ -257,21 +263,12 @@ export default class Card {
     );
   }
 
-  setAborting() {
-    const resetPopupState = () => {
-      this._popupComponent.updateData({isDisabled: false, deletingCommentId: null});
-      this._popupComponent.moveScrollDown();
-    };
-
-    this._popupComponent.shake(resetPopupState);
-  }
 
   _handleModelEvent(userAction, updateType, update) {
     switch (userAction) {
       case UserAction.ADD_COMMENT: {
         this._api.addComment(this._film.id, update).then((response) => {
           this._commentsModel.addComment(updateType, response);
-          // this._popupComponent.moveScrollDown();
         })
         .catch(() => {
           this.setAborting();
@@ -281,7 +278,6 @@ export default class Card {
       case UserAction.DELETE_COMMENT: {
         this._api.deleteComment(update).then(() => {
           this._commentsModel.deleteComment(updateType, update);
-          // this._popupComponent.moveScrollDown();
         })
         .catch(() => {
           this.setAborting();

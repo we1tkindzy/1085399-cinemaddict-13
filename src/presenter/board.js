@@ -14,7 +14,7 @@ import {filter} from "../utils/filter.js";
 const FILM_COUNT_PER_STEP = 5;
 
 
-export default class FilmList {
+export default class Board {
   constructor(siteMainElement, siteFooterElement, filmsModel, filterModel, api) {
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
@@ -99,16 +99,9 @@ export default class FilmList {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        // this._filmsModel.updateFilm(updateType, update);
         this._api.updateFilms(update)
           .then((response) => this._filmsModel.updateFilm(updateType, response));
         break;
-      // case UserAction.ADD_COMMENT:
-      //   this._filmsModel.addComment(updateType, update);
-      //   break;
-      // case UserAction.DELETE_COMMENT:
-      //   this._filmsModel.deleteComment(updateType, update);
-      //   break;
     }
   }
 

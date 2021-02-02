@@ -1,6 +1,6 @@
 import AbstractView from "./abstract.js";
 
-const ctreatesProfileTemplate = (userRank) => {
+const createProfileTemplate = (userRank) => {
   const userRankTemplate = userRank || ``;
 
   return `<section class="header__profile profile">
@@ -16,6 +16,6 @@ export default class UserProfile extends AbstractView {
   }
 
   getTemplate() {
-    return ctreatesProfileTemplate(this._userRank);
+    return createProfileTemplate(this._userRank);
   }
 }

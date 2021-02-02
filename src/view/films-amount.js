@@ -1,6 +1,6 @@
 import AbstractView from "./abstract.js";
 
-const createsStatisticsTemplate = (countsFilms) => {
+const createStatisticsTemplate = (countsFilms) => {
   const count = countsFilms;
 
   return `<section class="footer__statistics">
@@ -8,13 +8,13 @@ const createsStatisticsTemplate = (countsFilms) => {
   </section>`;
 };
 
-export default class Statistics extends AbstractView {
+export default class FilmsAmount extends AbstractView {
   constructor(countsFilms) {
     super();
     this._countsFilms = countsFilms;
   }
 
   getTemplate() {
-    return createsStatisticsTemplate(this._countsFilms);
+    return createStatisticsTemplate(this._countsFilms);
   }
 }
