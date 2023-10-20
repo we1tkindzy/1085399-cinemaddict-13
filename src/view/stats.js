@@ -3,10 +3,14 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import SmartView from "./smart.js";
-import {getWatchedFilms, getTotalDuration, getGenresStats, getTopGenre} from "../utils/statistics.js";
+import {
+  getWatchedFilms,
+  getTotalDuration,
+  getGenresStats,
+  getTopGenre,
+} from "../utils/statistics.js";
 
 dayjs.extend(duration);
-
 
 const StatsFilter = {
   ALL_TIME: `all-time`,
@@ -16,23 +20,29 @@ const StatsFilter = {
   YEAR: `year`,
 };
 
-
 const filter = {
   [StatsFilter.ALL_TIME]: (films) => films,
 
-  [StatsFilter.TODAY]: (films) => films.
-    filter((film) => dayjs(film.watchingDate).isAfter(dayjs().subtract(1, `day`))),
+  [StatsFilter.TODAY]: (films) =>
+    films.filter((film) =>
+      dayjs(film.watchingDate).isAfter(dayjs().subtract(1, `day`))
+    ),
 
-  [StatsFilter.WEEK]: (films) => films.
-    filter((film) => dayjs(film.watchingDate).isAfter(dayjs().subtract(1, `week`))),
+  [StatsFilter.WEEK]: (films) =>
+    films.filter((film) =>
+      dayjs(film.watchingDate).isAfter(dayjs().subtract(1, `week`))
+    ),
 
-  [StatsFilter.MONTH]: (films) => films.
-    filter((film) => dayjs(film.watchingDate).isAfter(dayjs().subtract(1, `month`))),
+  [StatsFilter.MONTH]: (films) =>
+    films.filter((film) =>
+      dayjs(film.watchingDate).isAfter(dayjs().subtract(1, `month`))
+    ),
 
-  [StatsFilter.YEAR]: (films) => films.
-    filter((film) => dayjs(film.watchingDate).isAfter(dayjs().subtract(1, `year`))),
+  [StatsFilter.YEAR]: (films) =>
+    films.filter((film) =>
+      dayjs(film.watchingDate).isAfter(dayjs().subtract(1, `year`))
+    ),
 };
-
 
 const renderGenresChart = (statisticCtx, films) => {
   if (films.length === 0) {
@@ -44,8 +54,7 @@ const renderGenresChart = (statisticCtx, films) => {
   const labels = [];
   const amounts = [];
 
-  Object
-    .entries(getGenresStats(films))
+  Object.entries(getGenresStats(films))
     .sort((a, b) => b[1] - a[1])
     .forEach(([label, amount]) => {
       labels.push(label);
@@ -59,64 +68,69 @@ const renderGenresChart = (statisticCtx, films) => {
     type: `horizontalBar`,
     data: {
       labels,
-      datasets: [{
-        data: amounts,
-        backgroundColor: `#ffe800`,
-        hoverBackgroundColor: `#ffe800`,
-        anchor: `start`
-      }]
+      datasets: [
+        {
+          data: amounts,
+          backgroundColor: `#ffe800`,
+          hoverBackgroundColor: `#ffe800`,
+          anchor: `start`,
+        },
+      ],
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 20
+            size: 20,
           },
           color: `#ffffff`,
           anchor: `start`,
           align: `start`,
           offset: 40,
-        }
+        },
       },
       scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: `#ffffff`,
-            padding: 100,
-            fontSize: 20
+        yAxes: [
+          {
+            ticks: {
+              fontColor: `#ffffff`,
+              padding: 100,
+              fontSize: 20,
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false,
+            },
+            barThickness: 24,
           },
-          gridLines: {
-            display: false,
-            drawBorder: false
+        ],
+        xAxes: [
+          {
+            ticks: {
+              display: false,
+              beginAtZero: true,
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false,
+            },
           },
-          barThickness: 24
-        }],
-        xAxes: [{
-          ticks: {
-            display: false,
-            beginAtZero: true
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false
-          },
-        }],
+        ],
       },
       legend: {
-        display: false
+        display: false,
       },
       tooltips: {
-        enabled: false
-      }
-    }
+        enabled: false,
+      },
+    },
   });
 };
 
-
 const createStatsTemplate = (localData) => {
-  const {films, currentFilter, userRank} = localData;
+  const { films, currentFilter, userRank } = localData;
   const amountWatchedFilms = getWatchedFilms(films);
-  const {hours, minutes} = getTotalDuration(films);
+  const { hours, minutes } = getTotalDuration(films);
   const topGenre = getTopGenre(films);
 
   const userRankTemplate = userRank || ``;
@@ -131,19 +145,29 @@ const createStatsTemplate = (localData) => {
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" ${StatsFilter.ALL_TIME === currentFilter ? `checked` : ``}>
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" ${
+        StatsFilter.ALL_TIME === currentFilter ? `checked` : ``
+      }>
       <label for="statistic-all-time" class="statistic__filters-label">All time</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today" ${StatsFilter.TODAY === currentFilter ? `checked` : ``}>
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today" ${
+        StatsFilter.TODAY === currentFilter ? `checked` : ``
+      }>
       <label for="statistic-today" class="statistic__filters-label">Today</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week" ${StatsFilter.WEEK === currentFilter ? `checked` : ``}>
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week" ${
+        StatsFilter.WEEK === currentFilter ? `checked` : ``
+      }>
       <label for="statistic-week" class="statistic__filters-label">Week</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month" ${StatsFilter.MONTH === currentFilter ? `checked` : ``}>
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month" ${
+        StatsFilter.MONTH === currentFilter ? `checked` : ``
+      }>
       <label for="statistic-month" class="statistic__filters-label">Month</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year" ${StatsFilter.YEAR === currentFilter ? `checked` : ``}>
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year" ${
+        StatsFilter.YEAR === currentFilter ? `checked` : ``
+      }>
       <label for="statistic-year" class="statistic__filters-label">Year</label>
     </form>
 
@@ -168,7 +192,6 @@ const createStatsTemplate = (localData) => {
 
   </section>`;
 };
-
 
 export default class Stats extends SmartView {
   constructor(films, userRank) {
@@ -204,11 +227,9 @@ export default class Stats extends SmartView {
       return;
     }
 
-
     const filteredFilms = filter[newFilter](this._allFilms);
 
-
-    this.updateData({films: filteredFilms, currentFilter: newFilter});
+    this.updateData({ films: filteredFilms, currentFilter: newFilter });
   }
 
   _setInnerHandler() {

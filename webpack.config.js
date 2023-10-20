@@ -1,14 +1,25 @@
-const path = require('path');
+const path = require("path");
+
+let mode = "development";
+let target = "web";
+
+if (process.env.NODE_ENV === "production") {
+  mode = "production";
+  target = "browserslist";
+}
 
 module.exports = {
-  entry: './src/main.js',
+  mode,
+  target,
+  devtool: "source-map",
+  entry: "./src/main.js",
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'public'),
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "public"),
   },
-  devtool: 'source-map',
   devServer: {
-    contentBase: path.resolve(__dirname, 'public'),
-    watchContentBase: true,
-  }
+    static: path.resolve(__dirname, "public"),
+    open: true,
+    hot: true,
+  },
 };

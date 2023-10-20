@@ -1,16 +1,19 @@
 import AbstractView from "./abstract.js";
-import {MenuItem} from "../utils/const.js";
+import { MenuItem } from "../utils/const.js";
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
-  const {type, name, count} = filter;
+  const { type, name, count } = filter;
 
-  const countType = type === `all` ? `` : `<span class="main-navigation__item-count">${count}</span>`;
+  const countType =
+    type === `all`
+      ? ``
+      : `<span class="main-navigation__item-count">${count}</span>`;
 
-  return (
-    `<a href="#${type}" class="main-navigation__item ${type === currentFilterType ? `main-navigation__item--active` : ``}" date-type="${MenuItem.FILMS}">${name}
+  return `<a href="#${type}" class="main-navigation__item ${
+    type === currentFilterType ? `main-navigation__item--active` : ``
+  }" date-type="${MenuItem.FILMS}">${name}
       ${countType}
-    </a>`
-  );
+    </a>`;
 };
 
 export const createFilterTemplate = (filterItems, currentFilterType) => {
@@ -44,7 +47,9 @@ export default class Filter extends AbstractView {
 
     evt.preventDefault();
     const filterName = evt.target.textContent.split(`\n`, 1)[0];
-    const filterType = this._filters.filter((element) => element.name === filterName)[0].type;
+    const filterType = this._filters.filter(
+      (element) => element.name === filterName
+    )[0].type;
     this._callback.filterTypeChange(filterType);
   }
 

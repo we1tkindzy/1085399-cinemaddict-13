@@ -1,6 +1,5 @@
 import AbstractView from "./abstract.js";
-import {MenuItem} from "../utils/const.js";
-
+import { MenuItem } from "../utils/const.js";
 
 export const createMenuTemplate = () => {
   return `<nav class="main-navigation">
@@ -20,7 +19,6 @@ export default class Menu extends AbstractView {
     return createMenuTemplate();
   }
 
-
   _menuClickHandler(evt) {
     if (evt.target.tagName !== `A`) {
       return;
@@ -28,10 +26,13 @@ export default class Menu extends AbstractView {
 
     evt.preventDefault();
 
-    const buttonStats = this.getElement().querySelector(`[data-type="${MenuItem.STATS}"]`);
+    const buttonStats = this.getElement().querySelector(
+      `[data-type="${MenuItem.STATS}"]`
+    );
 
-
-    const isActive = buttonStats.classList.contains(`main-navigation__additional--active`);
+    const isActive = buttonStats.classList.contains(
+      `main-navigation__additional--active`
+    );
 
     if (evt.target.dataset.type === MenuItem.STATS && isActive) {
       return;

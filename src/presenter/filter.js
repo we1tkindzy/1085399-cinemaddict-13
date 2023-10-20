@@ -1,7 +1,7 @@
 import FilterView from "../view/filter.js";
-import {render, RenderPosition, replace, remove} from "../utils/render.js";
-import {filter} from "../utils/filter.js";
-import {FilterType, UpdateType} from "../utils/const.js";
+import { render, RenderPosition, replace, remove } from "../utils/render.js";
+import { filter } from "../utils/filter.js";
+import { FilterType, UpdateType } from "../utils/const.js";
 
 export default class Filter {
   constructor(filterContainer, filterModel, filmsModel) {
@@ -30,10 +30,16 @@ export default class Filter {
     const prevFilterComponent = this._filterComponent;
 
     this._filterComponent = new FilterView(filters, this._currentFilter);
-    this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._filterComponent.setFilterTypeChangeHandler(
+      this._handleFilterTypeChange
+    );
 
     if (prevFilterComponent === null) {
-      render(this._filterContainer, this._filterComponent, RenderPosition.AFTERBEGIN);
+      render(
+        this._filterContainer,
+        this._filterComponent,
+        RenderPosition.AFTERBEGIN
+      );
       return;
     }
 
@@ -64,23 +70,23 @@ export default class Filter {
       {
         type: FilterType.ALL,
         name: `All movies`,
-        count: filter[FilterType.ALL](films).length
+        count: filter[FilterType.ALL](films).length,
       },
       {
         type: FilterType.WATCHLIST,
         name: `Watchlist`,
-        count: filter[FilterType.WATCHLIST](films).length
+        count: filter[FilterType.WATCHLIST](films).length,
       },
       {
         type: FilterType.WATCHED,
         name: `History`,
-        count: filter[FilterType.WATCHED](films).length
+        count: filter[FilterType.WATCHED](films).length,
       },
       {
         type: FilterType.FAVORITE,
         name: `Favorites`,
-        count: filter[FilterType.FAVORITE](films).length
-      }
+        count: filter[FilterType.FAVORITE](films).length,
+      },
     ];
   }
 }

@@ -7,7 +7,6 @@ export const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-
 export const sortFilmDateUp = (filmA, filmB) => {
   return dayjs(filmB.releaseDate).diff(dayjs(filmA.releaseDate));
 };
@@ -25,4 +24,5 @@ export const getTimeFromMins = (mins) => {
   return hours + minutes + `m`;
 };
 
-export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+export const generateId = () =>
+  Date.now() + parseInt(Math.random() * 10000, 10);

@@ -1,11 +1,10 @@
 import UserProfileView from "../view/user-profile.js";
-import {RenderPosition, render, replace, remove} from "../utils/render.js";
-
+import { RenderPosition, render, replace, remove } from "../utils/render.js";
 
 const UserRank = {
   NOVICE: `Novice`,
   FAN: `Fan`,
-  MOVIE_BUFF: `Movie Buff`
+  MOVIE_BUFF: `Movie Buff`,
 };
 
 const NOVICE_AMOUNT = 0;
@@ -32,10 +31,13 @@ export default class UsersRank {
 
     this._userRankComponent = new UserProfileView(this._currentUserRank);
     if (prevUserRankComponent === null) {
-      render(this._userRankContainer, this._userRankComponent, RenderPosition.BEFOREEND);
+      render(
+        this._userRankContainer,
+        this._userRankComponent,
+        RenderPosition.BEFOREEND
+      );
       return;
     }
-
 
     replace(this._userRankComponent, prevUserRankComponent);
     remove(prevUserRankComponent);
@@ -54,7 +56,9 @@ export default class UsersRank {
   }
 
   _getUserRank() {
-    const watchedFilmsCount = this._filmsModel.getFilms().filter((movie) => movie.isWatched).length;
+    const watchedFilmsCount = this._filmsModel
+      .getFilms()
+      .filter((movie) => movie.isWatched).length;
 
     if (watchedFilmsCount > MOVIE_BUFF_AMOUNT) {
       return UserRank.MOVIE_BUFF;

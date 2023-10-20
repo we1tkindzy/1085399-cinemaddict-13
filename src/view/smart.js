@@ -6,17 +6,12 @@ export default class Smart extends Abstract {
     this._data = {};
   }
 
-
   updateData(update, justDataUpdating) {
     if (!update) {
       return;
     }
 
-    this._data = Object.assign(
-        {},
-        this._data,
-        update
-    );
+    this._data = Object.assign({}, this._data, update);
 
     if (justDataUpdating) {
       return;

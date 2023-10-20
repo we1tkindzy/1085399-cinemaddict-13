@@ -15,14 +15,16 @@ export default class Comments extends Observer {
   }
 
   addComment(updateType, update) {
-    const {film, comments} = update;
+    const { film, comments } = update;
     this._comments = comments;
 
     this._notify(updateType, film);
   }
 
   deleteComment(updateType, update) {
-    const index = this._comments.findIndex((comment) => Number(comment.id) === Number(update));
+    const index = this._comments.findIndex(
+      (comment) => Number(comment.id) === Number(update)
+    );
 
     if (index === -1) {
       throw new Error(`Can't delete unexisting comment`);
@@ -30,24 +32,18 @@ export default class Comments extends Observer {
 
     this._comments = [
       ...this._comments.slice(0, index),
-      ...this._comments.slice(index + 1)
+      ...this._comments.slice(index + 1),
     ];
-
 
     this._notify(updateType);
   }
 
   static adaptToClient(comment) {
-    const adaptedComment = Object.assign(
-        {},
-        comment,
-        {
-          message: comment.comment,
-          emoji: comment.emotion,
-          commentDate: new Date(comment.date)
-        }
-    );
-
+    const adaptedComment = Object.assign({}, comment, {
+      message: comment.comment,
+      emoji: comment.emotion,
+      commentDate: new Date(comment.date),
+    });
 
     delete adaptedComment.comment;
     delete adaptedComment.emotion;
@@ -57,16 +53,11 @@ export default class Comments extends Observer {
   }
 
   static adaptToServer(comment) {
-    const adaptedComment = Object.assign(
-        {},
-        comment,
-        {
-          comment: comment.message,
-          emotion: comment.emoji,
-          date: comment.commentDate.toISOString()
-        }
-    );
-
+    const adaptedComment = Object.assign({}, comment, {
+      comment: comment.message,
+      emotion: comment.emoji,
+      date: comment.commentDate.toISOString(),
+    });
 
     delete adaptedComment.message;
     delete adaptedComment.emoji;
